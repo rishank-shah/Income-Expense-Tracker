@@ -1,5 +1,6 @@
 {% extends "auth_app/base.html" %}
 {% load static %}
+{% block title %}Register{% endblock %}
 {% block body_main %}
 {% include "partials/_navbar_index.html" %}
 <div class="main-content">
@@ -78,7 +79,7 @@
         </div>
         <div class="row mt-3">
         <div class="col-6">
-            <a href="#" class="text-light"><small>Forgot password?</small></a>
+            <a href="{% url 'password_reset' %}" class="text-light"><small>Forgot password?</small></a>
         </div>
         <div class="col-6 text-right">
             <a href="{% url 'login' %}" class="text-light"><small>Login</small></a>
