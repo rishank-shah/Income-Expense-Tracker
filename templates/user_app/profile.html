@@ -19,6 +19,10 @@
         <div class="col-md-10 order-xl-1">
           <div class="card">
             <div class="card-header">
+              <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">{% include "partials/_messages.html" %}</div>
+              </div>
               <div class="row align-items-center">
                 <div class="col-8">
                   <h3 class="mb-0">Edit profile </h3>
@@ -26,51 +30,103 @@
               </div>
             </div>
             <div class="card-body">
-              <form>
-                <h6 class="heading-small text-muted mb-4">User information</h6>
+              <form action="{% url 'user_profile' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row mt-2 mb-3">
+                  <div class="col-md-5">
+                    <h6 class="heading-small text-muted ">User information</h6>
+                  </div>
+                  <div class="col-md-5"></div>
+                  <div class="col-md-2">
+                    <button type="submit" class="text-right btn btn-sm btn-primary">Update Profile</button>
+                  </div>
+                </div>
                 <div class="pl-lg-4">
-                  <div class="row">
+                  <div class="text-center mb-3">
+                      {% if profile_pic %}
+                      <input id="photo" name="profile_pic" type="file" class="btn btn-sm btn-secondary" > <img class="rounded-circle account-img" style="width:200px;height:200px" src="{{ profile_pic.url }}"> </input>
+                      {% else %}
+                      <input id="photo" name="profile_pic" type="file" class="btn btn-sm btn-secondary" > <img style="width:200px;height:200px" src="https://t4.ftcdn.net/jpg/03/46/93/61/360_F_346936114_RaxE6OQogebgAWTalE1myseY1Hbb5qPM.jpg"></input>
+                      {% endif %}
+                  </div>            
+                  <div class="row mt-2">
                     <div class="col-lg-6">
                       <div class="form-group">
                         <label class="form-control-label" for="input-first-name">First name</label>
-                        <input type="text" id="input-first-name" class="form-control" placeholder="First name" >
+                        <input type="text" id="input-first-name" name="first_name" value="{{first_name}}"   class="form-control" placeholder="First name" >
                       </div>
                     </div>
                     <div class="col-lg-6">
                       <div class="form-group">
                         <label class="form-control-label" for="input-last-name">Last name</label>
-                        <input type="text" id="input-last-name" class="form-control" placeholder="Last name" >
+                        <input type="text" id="input-last-name" name="last_name"value="{{last_name}}" class="form-control" placeholder="Last name" >
                       </div>
                     </div>
                   </div>
-                  <div class="text-center"><a href="#!" class="btn btn-sm btn-primary">Save Profile</a></div>
                 </div>
               </form>
-              <form>
-                <hr class="my-4" />
-                <h6 class="heading-small text-muted mb-4">Change Password</h6>
-                <div class="pl-lg-4">
-                  <div class="row">
-                    <div class="col-md-12">
-                      <div class="form-group">
-                        <label class="form-control-label" for="input-address">New Password</label>
-                        <input id="input-address" class="form-control" type="text">
+              <hr class="my-4 mt-2 mb-2" />
+              <div class="mt-5">
+                <form method="POST" action="{% url 'change_currency' %}">
+                  {% csrf_token %}
+                  <div class="row mt-2 mb-3">
+                    <div class="col-md-5">
+                      <h6 class="heading-small text-muted ">Currency</h6>
+                    </div>
+                    <div class="col-md-4"></div>
+                    <div class="col-md-3">
+                      <button type="submit" class="text-right btn btn-sm btn-primary">Change Currency</button>
+                    </div>
+                  </div>
+                  <div class="pl-lg-4">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label class="form-control-label" for="input-address">Select Currency form list:</label>
+                          <select name = "currency" class="custom-select" id="inputGroupSelect04" aria-label="Example select with button addon">
+                            {% if selected_currency %}
+                              <option selected name = "currency" value = "{{ selected_currency }}">{{ selected_currency }}</option>
+                            {% endif %}
+                            {% for currency in currency_data %}
+                              <option name = "currency" value="{{ currency.name }} - {{ currency.value }}" >{{ currency.name }} - {{ currency.value }}</option>
+                            {% endfor %}
+                          </select>
+                        </div>
                       </div>
                     </div>
-                    <div class="col-md-12">
+                  </div>
+                </form>
+              </div>
+              <hr class="my-4 mt-2 mb-2" />
+              <div class="mt-5">
+                <form>
+                  <div class="row mt-2 mb-3">
+                    <div class="col-md-5">
+                      <h6 class="heading-small text-muted ">Change Password</h6>
+                    </div>
+                    <div class="col-md-4"></div>
+                    <div class="col-md-3">
+                      <a href="#!" class="text-right btn btn-sm btn-primary">Update Password</a>
+                    </div>
+                  </div>
+                  <div class="pl-lg-4">
+                    <div class="row">
+                      <div class="col-md-12">
                         <div class="form-group">
-                          <label class="form-control-label" for="input-address">Re-Enter New Password</label>
+                          <label class="form-control-label" for="input-address">Old Password</label>
                           <input id="input-address" class="form-control" type="text">
                         </div>
                       </div>
-                  </div>
-                </div>
-                <div class="text-center"><a href="#!" class="btn btn-sm btn-primary">Change Password</a></div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label class="form-control-label" for="input-address">New Password</label>
+                          <input id="input-address" class="form-control" type="text">
+                        </div>
+                      </div>
+                      <div class="col-md-12">
+                          <div class="form-group">
+                            <label class="form-control-label" for="input-address">Re-Enter New Password</label>
+                            <input id="input-address" class="form-control" type="text">
+                          </div></div></div></div>
+                </form></div></div></div></div></div></div></div>
 {% endblock %}
