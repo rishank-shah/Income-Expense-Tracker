@@ -15,28 +15,46 @@
                 <span class="nav-link-text">Dashboard</span>
               </a>
             </li>
+          </ul>
+          <hr class="my-3">
+          <h6 class="navbar-heading p-0 text-muted">
+            <span class="docs-normal">Expenses</span>
+          </h6>
+          <ul class="navbar-nav mb-md-3">
             <li class="nav-item">
-              <a class="nav-link" href="">
-                <i class="ni ni-collection"></i>
+              <a class="nav-link" href="{% url 'expense' %}">
+                <i class="ni ni-money-coins"></i>
                 <span class="nav-link-text">Expense</span>
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'expense' %}">
+                <i class="ni ni-collection"></i>
+                <span class="nav-link-text">Category</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="">
+                <i class="ni ni-chart-pie-35"></i>
+                <span class="nav-link-text">Expense Summary</span>
+              </a>
+            </li>
+          </ul>
+          <hr class="my-3">
+          <h6 class="navbar-heading p-0 text-muted">
+            <span class="docs-normal">Income</span>
+          </h6>
+          <ul class="navbar-nav mb-md-3">
             <li class="nav-item">
               <a class="nav-link" href="">
                 <i class="ni ni-money-coins"></i>
                 <span class="nav-link-text">Income</span>
               </a>
             </li>
-          </ul>
-          <hr class="my-3">
-          <h6 class="navbar-heading p-0 text-muted">
-            <span class="docs-normal">Summary</span>
-          </h6>
-          <ul class="navbar-nav mb-md-3">
             <li class="nav-item">
-              <a class="nav-link" href="">
-                <i class="ni ni-chart-bar-32"></i>
-                <span class="nav-link-text">Expense Summary</span>
+              <a class="nav-link" href="{% url 'expense' %}">
+                <i class="ni ni-collection"></i>
+                <span class="nav-link-text">Category</span>
               </a>
             </li>
             <li class="nav-item">

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block body_main %}
+    {% include "partials/_sidebar_main.html" %}
+  <div class="main-content" id="panel">
+    {% include "partials/_navbar_main.html" %}
+    <div class="header bg-primary pb-6">
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-6">{% include "partials/_messages.html" %}</div>
+      </div>
+      <div class="container-fluid">
+        <div class="header-body">
+          <div class="row align-items-center py-4">
+            <div class="col-lg-6 col-7">
+              <h6 class="h2 text-white d-inline-block mb-0">Expense</h6>
+              <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                  <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                  <li class="breadcrumb-item"><a href="{% url 'expense' %}">Expense</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">View</li>
+                </ol>
+              </nav>
+            </div>
+            <div class="col-lg-6 col-5 text-right">
+                <a href="{% url 'add_expense' %}" class="btn btn btn-neutral">Create New</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid mt--6">
+      <div class="row">
+        <div class="col">
+          <div class="card bg-default">
+            <div class="card-header bg-transparent">
+              <div class="row align-items-center">  
+                <div class="col">
+                  <h5 class="h3 text-white mb-0 text-center">All Expenses</h5>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

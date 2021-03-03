@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block body_main %}
+    {% include "partials/_sidebar_main.html" %}
+  <div class="main-content bg-primary" id="panel">
+    {% include "partials/_navbar_main.html" %}
+    <div class="header bg-primary pb-6">
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-6">{% include "partials/_messages.html" %}</div>
+      </div>
+      <div class="container-fluid">
+        <div class="header-body">
+          <div class="row align-items-center py-4">
+            <div class="col-lg-6 col-7">
+              <h6 class="h2 text-white d-inline-block mb-0">Expense</h6>
+              <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                  <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i></a></li>
+                  <li class="breadcrumb-item"><a href="{% url 'expense' %}">Expense</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Add Expense</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid mt--6">
+      <div class="row">
+        <div class="col mr-5 ml-5">
+          <div class="card">
+            <div class="card-header bg-transparent">
+              <div class="row align-items-center">  
+                <div class="col">
+                  <h5 class="h3 mb-0 text-center">Add Expenses</h5>
+                  <form action="{% url 'add_expense' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="">Amount</label>
+                        <input class="form-control form-control-sm" type = "number" name="amount" value = "{{ values.amount }}" >
+                    </div>
+                    <div class="form-group">
+                        <label for="">Description</label>
+                        <input class="form-control form-control-sm" type = "text" name="description" value = "{{ values.description }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="">Category</label>
+                        <select class="form-control form-control-sm" name="category">
+                            {% for category in categories %}
+                                <option name = "category" value="{{category.name}}">{{category.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Date of Expense</label>
+                        <input class="form-control form-control-sm" type = "date" name="expense_date">
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Save Expense</button>
+                    </div>
+                </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
