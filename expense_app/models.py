@@ -5,6 +5,7 @@ from django.utils.timezone import localtime
 class Category(models.Model):
 	user = models.ForeignKey(to = User,on_delete=models.CASCADE)
 	name = models.CharField(max_length = 256)
+	created_at = models.DateTimeField(default=localtime)
 
 	def __str__(self):
 		return str(self.user) + self.name
