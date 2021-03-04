@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% block title_main %}{{request.user.username}}'s Profile{% endblock %}
 {% block body_main %}
     {% include "partials/_sidebar_main.html" %}
   <div class="main-content" id="panel">
