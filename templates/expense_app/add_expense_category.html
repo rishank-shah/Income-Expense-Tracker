@@ -58,7 +58,8 @@
             <div class="card-header bg-transparent">
               <div class="row align-items-center">  
                 <div class="col">
-                  <h5 class="h3 mb-0 text-center">Expense Categories List</h5>
+                  <h5 class="h3 mb-3 text-center">Expense Categories List</h5>
+                  <h6 class="h3 mb-3 text-center text-danger">Please Note: Deleting Category will also delete the expenses which are linked with these category</h6>
                   {% if categories %}
                     <table class="table align-items-center table-flush">
                       <thead class="thead-light">
@@ -70,7 +71,7 @@
                       </thead>
                       <tbody>
                         {% for cat in categories %}
-                          <tr><td> {{cat.name}} </td><td> {{cat.created_at}} </td><td> <button class="btn btn-info btn-sm mr-2">Edit</button><button class="btn btn-danger btn-sm">Delete</button> </td></tr>
+                          <tr><td> {{cat.name}} </td><td> {{cat.created_at}} </td><td><a href="{% url 'delete_expense_category' cat.id %}" class="btn btn-danger btn-sm">Delete</a> </td></tr>
                         {% endfor %}
                       </tbody>
                     </table>

@@ -5,5 +5,6 @@ urlpatterns = [
     path('',views.dashboard,name="dashboard"),
     path('view/',views.expense_page,name="expense"),
     path('add-expense/',views.add_expense,name="add_expense"),
-    path('add-category/',views.add_expense_category,name="add_expense_category")
+    path('add-category/',views.add_expense_category,name="add_expense_category"),
+    path('delete-category/<int:id>/',views.delete_expense_category,name="delete_expense_category")
 ]

@@ -22,9 +22,7 @@
                 </ol>
               </nav>
             </div>
-            <div class="col-lg-6 col-5 text-right">
-                <a href="{% url 'add_expense' %}" class="btn btn btn-neutral">Create New</a>
-            </div>
+            <div class="col-lg-6 col-5 text-right"><a href="{% url 'add_expense' %}" class="btn btn btn-neutral">Create New</a></div>
           </div>
         </div>
       </div>
@@ -36,11 +34,51 @@
             <div class="card-header bg-transparent">
               <div class="row align-items-center">  
                 <div class="col">
-                  <h5 class="h3 text-white mb-0 text-center">All Expenses</h5>
-                  
+                  {% if expenses %}
+                    <h5 class="h3 text-white mb-0 text-center">My Expenses - {{ expenses.count }}</h5>
+                    <div class="app-table mt-5">
+                      <table class="table text-white">
+                        <thead>
+                          <tr>
+                            <th style="font-size: small;">Amount ({{currency}})</th>
+                            <th style="font-size: small;">Category</th>
+                            <th style="font-size: small;">Description</th>
+                            <th style="font-size: small;">Date</th>
+                            <th style="font-size: small;">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for expense in page_expenses %}
+                            <tr>
+                              <td>{{expense.amount}}</td>
+                              <td>{{expense.category.name}}</td>
+                              <td>{{expense.description}}</td>
+                              <td>{{expense.date}}</td>
+                              <td><a href="" class="btn btn-warning btn-sm">Edit</a></td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  {% else %}
+                    <h5 class="h3 text-white mb-0 text-center">No expenses.</h5>
+                  {% endif %}
                 </div>
               </div>
             </div>
+          </div>
+          <div class="pagination-container">
+              <span class="text-white">Showing page {{page_expenses.number}} of {{ page_expenses.paginator.num_pages }}</span>
+            <ul class="pagination align-right float-right mr-auto">
+              {% if page_expenses.has_previous %}
+                <li {% if page_expenses.number == 1 %} class="page-item active" {% endif %}><a class="page-link" href="?page=1">&laquo; 1</a></li>
+                <li class="page-item"> <a class="page-link" href="?page={{ page_expenses.previous_page_number }}">Back</a></li>
+              {% endif %}
+              {% if page_expenses.has_next %}
+                <li class="page-item"> <a class="page-link" href="?page={{ page_expenses.next_page_number }}">Next</a></li>
+                <li class="page-item"> <a class="page-link" href="?page={{ page_expenses.paginator.num_pages }}">{{ page_expenses.paginator.num_pages}} &raquo;</a></li>
+              {% endif %}
+              </ul>
           </div>
         </div>
       </div>
