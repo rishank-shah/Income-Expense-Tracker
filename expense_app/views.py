@@ -38,11 +38,11 @@ def add_expense(request):
         if request.method == 'GET':
             return render(request,'expense_app/add_expense.html',context)
         if request.method == 'POST':
-            amount = request.POST.get('amount',None)
+            amount = request.POST.get('amount','')
             description = request.POST.get('description','')
             category = request.POST.get('category','')
             date = request.POST.get('expense_date','')
-            if amount== None:
+            if amount== '':
                 messages.error(request,'Amount cannot be empty')
                 return render(request,'expense_app/add_expense.html',context)
             amount = int(amount)
@@ -87,7 +87,9 @@ def add_expense_category(request):
             return render(request,'expense_app/add_expense_category.html',context)
         ExpenseCategory.objects.create(user=request.user,name = name).save()
         messages.success(request,'ExpenseCategory added')
-        return render(request,'expense_app/add_expense_category.html',context)
+        return render(request,'expense_app/add_expense_category.html',{
+            'categories' : categories,
+        })
 
 @login_required(login_url='login')
 def delete_expense_category(request,id):

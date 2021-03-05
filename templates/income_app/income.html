@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title_main %}Incomes{% endblock %}
+{% block body_main %}
+    {% include "partials/_sidebar_main.html" %}
+  <div class="main-content" id="panel">
+    {% include "partials/_navbar_main.html" %}
+    <div class="header bg-primary pb-6">
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-6">{% include "partials/_messages.html" %}</div>
+      </div>
+      <div class="container-fluid">
+        <div class="header-body">
+          <div class="row align-items-center py-4">
+            <div class="col-lg-6 col-7">
+              <h6 class="h2 text-white d-inline-block mb-0">Income</h6>
+              <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
+                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
+                  <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
+                  <li class="breadcrumb-item"><a href="{% url 'income' %}">Income</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">View</li>
+                </ol>
+              </nav>
+            </div>
+            <div class="col-lg-6 col-5 text-right"><a href="{% url 'add_income' %}" class="btn btn btn-neutral">Create New</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid mt--6">
+      <div class="row">
+        <div class="col">
+          <div class="card bg-default">
+            <div class="card-header bg-transparent">
+              <div class="row align-items-center">  
+                <div class="col">
+                  {% if incomes %}
+                    <h5 class="h3 text-white mb-0 text-center">My Incomes - {{ incomes.count }}</h5>
+                    <div class="app-table mt-5">
+                      <table class="table text-white">
+                        <thead>
+                          <tr>
+                            <th style="font-size: small;">Amount ({{currency}})</th>
+                            <th style="font-size: small;">Source</th>
+                            <th style="font-size: small;">Description</th>
+                            <th style="font-size: small;">Date</th>
+                            <th style="font-size: small;">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for income in page_incomes %}
+                            <tr>
+                              <td>{{income.amount}}</td>
+                              <td>{{income.source.source}}</td>
+                              <td>{{income.description}}</td>
+                              <td>{{income.date}}</td>
+                              <td><a href="" class="btn btn-warning btn-sm">Edit</a></td>
+                            </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  {% else %}
+                    <h5 class="h3 text-white mb-0 text-center">No incomes. Create <a href="{% url 'add_income' %}">one</a></h5>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="pagination-container">
+              <span class="text-white">Showing page {{page_incomes.number}} of {{ page_incomes.paginator.num_pages }}</span>
+            <ul class="pagination align-right float-right mr-auto">
+              {% if page_incomes.has_previous %}
+                <li {% if page_incomes.number == 1 %} class="page-item active" {% endif %}><a class="page-link" href="?page=1">&laquo; 1</a></li>
+                <li class="page-item"> <a class="page-link" href="?page={{ page_incomes.previous_page_number }}">Back</a></li>
+              {% endif %}
+              {% if page_incomes.has_next %}
+                <li class="page-item"> <a class="page-link" href="?page={{ page_incomes.next_page_number }}">Next</a></li>
+                <li class="page-item"> <a class="page-link" href="?page={{ page_incomes.paginator.num_pages }}">{{ page_incomes.paginator.num_pages}} &raquo;</a></li>
+              {% endif %}
+              </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
