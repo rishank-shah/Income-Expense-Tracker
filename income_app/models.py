@@ -19,6 +19,7 @@ class Income(models.Model):
 	date = models.DateField(default = localtime)
 	description = models.TextField()
 	source = models.ForeignKey(to=IncomeSource,on_delete=models.CASCADE)
+	created_at = models.DateTimeField(default=localtime)
 
 	def __str__(self):
 		return str(self.source) + str(self.date )+ str(self.amount)

@@ -8,10 +8,6 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 
 @login_required(login_url='login')
-def dashboard(request):
-    return render(request,'expense_app/dashboard.html')
-
-@login_required(login_url='login')
 def expense_page(request):
     expenses =  Expense.objects.filter(user=request.user).order_by('-date')
     paginator = Paginator(expenses,4)
@@ -34,7 +30,7 @@ def add_expense(request):
         context = {
             'categories' : categories,
             'values':request.POST
-    	}
+        }
         if request.method == 'GET':
             return render(request,'expense_app/add_expense.html',context)
         if request.method == 'POST':
@@ -45,7 +41,7 @@ def add_expense(request):
             if amount== '':
                 messages.error(request,'Amount cannot be empty')
                 return render(request,'expense_app/add_expense.html',context)
-            amount = int(amount)
+            amount = float(amount)
             if amount <= 0:
                 messages.error(request,'Amount should be greater than zero')
                 return render(request,'expense_app/add_expense.html',context)
@@ -105,3 +101,48 @@ def delete_expense_category(request,id):
             return redirect('add_expense_category')
     messages.error(request,'Please try again')
     return redirect('add_expense_category')
+
+@login_required(login_url='login')
+def edit_expense(request,id):
+    categories = ExpenseCategory.objects.filter(user=request.user)
+    if Expense.objects.filter(pk=id,user=request.user).exists():
+        expense = Expense.objects.get(pk=id,user=request.user)
+    else:
+        messages.error(request,'Something went Wrong. Please Try Again')
+        return redirect('expenses')
+    context = {
+        'expense':expense,
+        'values': expense,
+        'categories':categories
+    }
+    if request.method == 'GET':
+        return render(request,'expense_app/edit_expense.html',context)
+
+    if request.method == 'POST':
+        amount = request.POST.get('amount','')
+        description = request.POST.get('description','')
+        category = request.POST.get('category','')
+        date = request.POST.get('expense_date','')
+        if amount== '':
+            messages.error(request,'Amount cannot be empty')
+            return render(request,'expense_app/edit_expense.html',context)
+        amount = float(amount)
+        if amount <= 0:
+            messages.error(request,'Amount should be greater than zero')
+            return render(request,'expense_app/edit_expense.html',context)
+        if description == '':
+            messages.error(request,'Description cannot be empty')
+            return render(request,'expense_app/edit_expense.html',context)
+        if category == '':
+            messages.error(request,'ExpenseCategory cannot be empty')
+            return render(request,'expense_app/edit_expense.html',context)
+        if date == '':
+            date = localtime()
+        category_obj = ExpenseCategory.objects.get(user=request.user,name =category)
+        expense.amount = amount
+        expense.date = date
+        expense.category = category_obj
+        expense.description = description
+        expense.save() 
+        messages.success(request,'Expense Updated Successfully')
+        return redirect('expense')

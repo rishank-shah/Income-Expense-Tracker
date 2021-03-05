@@ -19,6 +19,7 @@ class Expense(models.Model):
 	date = models.DateField(default = localtime)
 	description = models.TextField()
 	category = models.ForeignKey(to=ExpenseCategory,on_delete=models.CASCADE)
+	created_at = models.DateTimeField(default=localtime)
 
 	def __str__(self):
 		return str(self.category) + str(self.date )+ str(self.amount)

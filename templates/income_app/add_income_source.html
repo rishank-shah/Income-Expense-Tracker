@@ -6,7 +6,7 @@
     {% include "partials/_navbar_main.html" %}
     <div class="header bg-primary pb-6">
       <div class="row">
-        <div class="col-md-2"></div>
+        <div class="col-md-1"></div>
         <div class="col-md-6">{% include "partials/_messages.html" %}</div>
       </div>
       <div class="container-fluid">
@@ -17,7 +17,7 @@
               <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
                 <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
                   <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i></a></li>
-                  <li class="breadcrumb-item"><a href="{% url 'expense' %}">Income</a></li>
+                  <li class="breadcrumb-item"><a href="{% url 'income' %}">Income</a></li>
                   <li class="breadcrumb-item active" aria-current="page">Add Source</li>
                 </ol>
               </nav>
@@ -36,13 +36,8 @@
                   <h5 class="h3 mb-0 text-center">Add Income Sources</h5>
                   <form action="{% url 'add_income_source' %}" method="POST">
                     {% csrf_token %}
-                    <div class="form-group">
-                        <label for="">Source</label>
-                        <input class="form-control form-control-sm" type = "text" name="source" value = "{{ values.source }}" >
-                    </div>
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Save Source</button>
-                    </div>
+                    <div class="form-group"><label for="">Source</label><input class="form-control form-control-sm" type = "text" name="source" value = "{{ values.source }}" ></div>
+                    <div class="text-center"><button type="submit" class="btn btn-primary">Save Source</button></div>
                 </form>
                 </div>
               </div>
@@ -62,23 +57,11 @@
                   <h6 class="h3 mb-3 text-center text-danger">Please Note: Deleting Source will also delete the incomes which are linked with these sources</h6>
                   {% if sources %}
                     <table class="table align-items-center table-flush">
-                      <thead class="thead-light">
-                        <tr>
-                          <th scope="col">Source Name</th>
-                          <th scope="col">Created At</th>
-                          <th scope="col">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {% for source in sources %}
-                          <tr><td> {{source.source}} </td><td> {{source.created_at}} </td><td><a href="{% url 'delete_income_source' source.id %}" class="btn btn-danger btn-sm">Delete</a> </td></tr>
-                        {% endfor %}
-                      </tbody>
+                      <thead class="thead-light"><tr><th scope="col">Source Name</th><th scope="col">Created At</th><th scope="col">Action</th></tr></thead>
+                      <tbody>{% for source in sources %}<tr><td> {{source.source}} </td><td> {{source.created_at}} </td><td><a href="{% url 'delete_income_source' source.id %}" class="btn btn-danger btn-sm">Delete</a> </td></tr>{% endfor %}</tbody>
                     </table>
                   {% else %}
-                    <div class="text-center text-danger mt-4">
-                      No Sources. Please Add Sources
-                    </div>
+                    <div class="text-center text-danger mt-4">No Sources. Please Add Sources</div>
                   {% endif %}
                 </div>
               </div>

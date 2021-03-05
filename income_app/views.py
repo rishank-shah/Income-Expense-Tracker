@@ -41,7 +41,7 @@ def add_income(request):
             if amount == '':
                 messages.error(request,'Amount cannot be empty')
                 return render(request,'income_app/add_income.html',context)
-            amount = int(amount)
+            amount = float(amount)
             if amount<=0 :
                 messages.error(request,'Amount should be greater than zero')
                 return render(request,'income_app/add_income.html',context)
