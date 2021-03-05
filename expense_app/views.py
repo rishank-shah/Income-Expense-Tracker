@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
-from .models import Expense, Category
+from .models import Expense, ExpenseCategory
 from django.contrib import messages
 from django.utils.timezone import localtime
 from user_profile.models import UserProfile
@@ -29,8 +29,8 @@ def expense_page(request):
 
 @login_required(login_url='login')
 def add_expense(request):
-    if Category.objects.filter(user=request.user).exists():
-        categories = Category.objects.filter(user=request.user)
+    if ExpenseCategory.objects.filter(user=request.user).exists():
+        categories = ExpenseCategory.objects.filter(user=request.user)
         context = {
             'categories' : categories,
             'values':request.POST
@@ -53,11 +53,11 @@ def add_expense(request):
                 messages.error(request,'Description cannot be empty')
                 return render(request,'expense_app/add_expense.html',context)
             if category == '':
-                messages.error(request,'Category cannot be empty')
+                messages.error(request,'ExpenseCategory cannot be empty')
                 return render(request,'expense_app/add_expense.html',context)
             if date == '':
                 date = localtime()
-            category_obj = Category.objects.get(user=request.user,name =category)
+            category_obj = ExpenseCategory.objects.get(user=request.user,name =category)
             Expense.objects.create(
                 user=request.user,
                 amount=amount,
@@ -73,7 +73,7 @@ def add_expense(request):
 
 @login_required(login_url='login')
 def add_expense_category(request):
-    categories = Category.objects.filter(user=request.user)
+    categories = ExpenseCategory.objects.filter(user=request.user)
     context = {
         'categories' : categories,
         'values':request.POST
@@ -83,16 +83,16 @@ def add_expense_category(request):
     if request.method == 'POST':
         name = request.POST.get('name','')
         if name == '':
-            messages.error(request,'Category cannot be empty')
+            messages.error(request,'ExpenseCategory cannot be empty')
             return render(request,'expense_app/add_expense_category.html',context)
-        Category.objects.create(user=request.user,name = name).save()
-        messages.success(request,'Category added')
+        ExpenseCategory.objects.create(user=request.user,name = name).save()
+        messages.success(request,'ExpenseCategory added')
         return render(request,'expense_app/add_expense_category.html',context)
 
 @login_required(login_url='login')
 def delete_expense_category(request,id):
-    if Category.objects.filter(pk=id).exists():
-        category = Category.objects.get(pk=id)
+    if ExpenseCategory.objects.filter(pk=id).exists():
+        category = ExpenseCategory.objects.get(pk=id)
         user = User.objects.get(username=request.user.username)
         if category.user != user:
             messages.error(request,'You cannot delete this catgeory.')

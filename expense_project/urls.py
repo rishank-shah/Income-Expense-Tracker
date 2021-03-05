@@ -23,9 +23,13 @@ urlpatterns = [
     path('', TemplateView.as_view(template_name="index.html")),
     path('auth/',include('auth_app.urls')),
     path('expense/',include('expense_app.urls')),
+    path('income/',include('income_app.urls')),
     path('user/',include('user_profile.urls')),
     path('admin/', admin.site.urls),
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,document_root = settings.MEDIA_ROOT)
+
+admin.site.site_header = 'Expense Income Tracker Admin'
+admin.site.index_title = 'Expense-Income-Tracker'
