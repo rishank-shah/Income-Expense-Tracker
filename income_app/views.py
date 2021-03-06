@@ -101,3 +101,58 @@ def delete_income_source(request,id):
             return redirect('add_income_source')
     messages.error(request,'Please try again')
     return redirect('add_income_source')
+
+@login_required(login_url='login')
+def edit_income(request,id):
+    sources = IncomeSource.objects.filter(user=request.user)
+    if Income.objects.filter(id=id,user=request.user).exists():
+        income = Income.objects.get(id=id,user=request.user)
+    else:
+        messages.error(request,'Something went Wrong. Please Try Again')
+        return redirect('income')
+    context = {
+        'income':income,
+        'values': income,
+        'sources':sources
+    }
+    if request.method == 'GET':
+        return render(request,'income_app/edit_income.html',context)
+
+    if request.method == 'POST':
+        amount = request.POST.get('amount','')
+        description = request.POST.get('description','')
+        source = request.POST.get('source','')
+        date = request.POST.get('income_date','')
+        if amount== '':
+            messages.error(request,'Amount cannot be empty')
+            return render(request,'income_app/edit_income.html',context)
+        amount = float(amount)
+        if amount <= 0:
+            messages.error(request,'Amount should be greater than zero')
+            return render(request,'income_app/edit_income.html',context)
+        if description == '':
+            messages.error(request,'Description cannot be empty')
+            return render(request,'income_app/edit_income.html',context)
+        if source == '':
+            messages.error(request,'Income Source cannot be empty')
+            return render(request,'income_app/edit_income.html',context)
+        if date == '':
+            date = localtime()
+        income_obj = IncomeSource.objects.get(user=request.user,source=source)
+        income.amount = amount
+        income.date = date
+        income.category = income_obj
+        income.description = description
+        income.save() 
+        messages.success(request,'Income Updated Successfully')
+        return redirect('income')
+
+@login_required(login_url='login')
+def delete_income(request,id):
+    if Income.objects.filter(id=id,user=request.user).exists():
+        Income.objects.get(id=id,user=request.user).delete()
+        messages.success(request,'Income Deleted Successfully')
+        return redirect('income')
+    else:
+        messages.error(request,'Something went Wrong. Please Try Again')
+        return redirect('income')

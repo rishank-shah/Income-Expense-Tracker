@@ -89,8 +89,8 @@ def add_expense_category(request):
 
 @login_required(login_url='login')
 def delete_expense_category(request,id):
-    if ExpenseCategory.objects.filter(pk=id).exists():
-        category = ExpenseCategory.objects.get(pk=id)
+    if ExpenseCategory.objects.filter(id=id).exists():
+        category = ExpenseCategory.objects.get(id=id)
         user = User.objects.get(username=request.user.username)
         if category.user != user:
             messages.error(request,'You cannot delete this catgeory.')
@@ -105,11 +105,11 @@ def delete_expense_category(request,id):
 @login_required(login_url='login')
 def edit_expense(request,id):
     categories = ExpenseCategory.objects.filter(user=request.user)
-    if Expense.objects.filter(pk=id,user=request.user).exists():
-        expense = Expense.objects.get(pk=id,user=request.user)
+    if Expense.objects.filter(id=id,user=request.user).exists():
+        expense = Expense.objects.get(id=id,user=request.user)
     else:
         messages.error(request,'Something went Wrong. Please Try Again')
-        return redirect('expenses')
+        return redirect('expense')
     context = {
         'expense':expense,
         'values': expense,
@@ -145,4 +145,14 @@ def edit_expense(request,id):
         expense.description = description
         expense.save() 
         messages.success(request,'Expense Updated Successfully')
+        return redirect('expense')
+
+@login_required(login_url='login')
+def delete_expense(request,id):
+    if Expense.objects.filter(id=id,user=request.user).exists():
+        Expense.objects.get(id=id,user=request.user).delete()
+        messages.success(request,'Expense Deleted Successfully')
+        return redirect('expense')
+    else:
+        messages.error(request,'Something went Wrong. Please Try Again')
         return redirect('expense')
