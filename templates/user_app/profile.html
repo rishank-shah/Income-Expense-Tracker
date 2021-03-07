@@ -4,43 +4,23 @@
     {% include "partials/_sidebar_main.html" %}
   <div class="main-content" id="panel">
     {% include "partials/_navbar_main.html" %}
-    <div class="header pb-6 d-flex " style="min-height: 300px; background-size: cover; background-position: center top;">
-      <span class="mask bg-gradient-default opacity-8"></span>
-      <div class="container-fluid d-flex mt-5">
-        <div class="row">
-          <div class="col">
-            <h1 class="display-2 text-white">Hello {{request.user.username}}</h1>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div class="header pb-6 d-flex " style="min-height: 300px; background-size: cover; background-position: center top;"><span class="mask bg-gradient-default opacity-8"></span><div class="container-fluid d-flex mt-5"><div class="row"><div class="col"><h1 class="display-2 text-white">Hello {{request.user.username}}</h1></div></div></div></div>
     <div class="container-fluid mt--9">
       <div class="row">
         <div class="col-md-1"></div>
         <div class="col-md-10 order-xl-1">
           <div class="card">
             <div class="card-header">
-              <div class="row">
-                <div class="col-md-4"></div>
-                <div class="col-md-4">{% include "partials/_messages.html" %}</div>
-              </div>
-              <div class="row align-items-center">
-                <div class="col-8">
-                  <h3 class="mb-0">Edit profile </h3>
-                </div>
-              </div>
+              <div class="row"><div class="col-md-4"></div><div class="col-md-4">{% include "partials/_messages.html" %}</div></div>
+              <div class="row align-items-center"><div class="col-8"><h3 class="mb-0">Edit profile </h3></div></div>
             </div>
             <div class="card-body">
               <form action="{% url 'user_profile' %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="row mt-2 mb-3">
-                  <div class="col-md-5">
-                    <h6 class="heading-small text-muted ">User information</h6>
-                  </div>
+                  <div class="col-md-5"><h6 class="heading-small text-muted ">User information</h6></div>
                   <div class="col-md-5"></div>
-                  <div class="col-md-2">
-                    <button type="submit" class="text-right btn btn-sm btn-primary">Update Profile</button>
-                  </div>
+                  <div class="col-md-2"><button type="submit" class="text-right btn btn-sm btn-primary">Update Profile</button></div>
                 </div>
                 <div class="pl-lg-4">
                   <div class="text-center mb-3">
@@ -71,13 +51,9 @@
                 <form method="POST" action="{% url 'change_currency' %}">
                   {% csrf_token %}
                   <div class="row mt-2 mb-3">
-                    <div class="col-md-5">
-                      <h6 class="heading-small text-muted ">Currency</h6>
-                    </div>
+                    <div class="col-md-5"><h6 class="heading-small text-muted ">Currency</h6></div>
                     <div class="col-md-4"></div>
-                    <div class="col-md-3">
-                      <button type="submit" class="text-right btn btn-sm btn-primary">Change Currency</button>
-                    </div>
+                    <div class="col-md-3"><button type="submit" class="text-right btn btn-sm btn-primary">Change Currency</button></div>
                   </div>
                   <div class="pl-lg-4">
                     <div class="row">
@@ -102,13 +78,9 @@
               <div class="mt-5">
                 <form>
                   <div class="row mt-2 mb-3">
-                    <div class="col-md-5">
-                      <h6 class="heading-small text-muted ">Change Password</h6>
-                    </div>
+                    <div class="col-md-5"><h6 class="heading-small text-muted ">Change Password</h6></div>
                     <div class="col-md-4"></div>
-                    <div class="col-md-3">
-                      <a href="#!" class="text-right btn btn-sm btn-primary">Update Password</a>
-                    </div>
+                    <div class="col-md-3"><a href="#!" class="text-right btn btn-sm btn-primary">Update Password</a></div>
                   </div>
                   <div class="pl-lg-4">
                     <div class="row">
