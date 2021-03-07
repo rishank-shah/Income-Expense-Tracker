@@ -6,6 +6,8 @@ from django.utils.timezone import localtime
 from user_profile.models import UserProfile
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+import datetime
+from django.http import JsonResponse
 
 @login_required(login_url='login')
 def expense_page(request):
@@ -156,3 +158,24 @@ def delete_expense(request,id):
     else:
         messages.error(request,'Something went Wrong. Please Try Again')
         return redirect('expense')
+
+@login_required(login_url='login')
+def expense_summary(request):
+    today_date = datetime.date.today()
+    six_months_ago = today_date - datetime.timedelta(days = 30*6)
+    expenses = Expense.objects.filter(user = request.user,date__gte=six_months_ago)
+    final_rep = {}
+    def get_category(expense):
+        return expense.category.name
+    category_list = list(set(map(get_category,expenses)))
+    def get_expense_category_amount(category):
+        amount = 0
+        category = ExpenseCategory.objects.get(name=category)
+        filtered_by_category = expenses.filter(category=category.id)
+        for i in filtered_by_category:
+            amount += i.amount
+        return amount
+    for x in expenses:
+        for y in category_list :
+            final_rep[y] = get_expense_category_amount(y)
+    return JsonResponse({'expense_category_data':final_rep},safe=False)

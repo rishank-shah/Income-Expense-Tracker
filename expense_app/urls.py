@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from django.views.generic import TemplateView
 
 urlpatterns = [
     path('view/',views.expense_page,name="expense"),
@@ -7,5 +8,7 @@ urlpatterns = [
     path('add-category/',views.add_expense_category,name="add_expense_category"),
     path('delete-category/<int:id>/',views.delete_expense_category,name="delete_expense_category"),
     path('edit-expense/<int:id>/',views.edit_expense,name="edit_expense"),
-    path('delete-expense/<int:id>/',views.delete_expense,name="delete_expense")
+    path('delete-expense/<int:id>/',views.delete_expense,name="delete_expense"),
+    path('expense-summary-data',views.expense_summary,name="expense_summary_data"),
+    path('expense-summary/',TemplateView.as_view(template_name="expense_app/expense_summary.html"),name="expense_summary")
 ]

@@ -6,6 +6,8 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from user_profile.models import UserProfile
 from django.utils.timezone import localtime
+import datetime
+from django.http import JsonResponse
 
 @login_required(login_url='login')
 def income_page(request):
@@ -156,3 +158,24 @@ def delete_income(request,id):
     else:
         messages.error(request,'Something went Wrong. Please Try Again')
         return redirect('income')
+
+@login_required(login_url='login')
+def income_summary(request):
+    today_date = datetime.date.today()
+    six_months_ago = today_date - datetime.timedelta(days = 30*6)
+    incomes = Income.objects.filter(user = request.user,date__gte=six_months_ago)
+    final_rep = {}
+    def get_source(income):
+        return income.source.source
+    sources_list = list(set(map(get_source,incomes)))
+    def get_income_source_amount(source):
+        amount = 0
+        source = IncomeSource.objects.get(source=source)
+        filtered_by_source = incomes.filter(source=source.id)
+        for i in filtered_by_source:
+            amount += i.amount
+        return amount
+    for x in incomes:
+        for y in sources_list :
+            final_rep[y] = get_income_source_amount(y)
+    return JsonResponse({'income_source_data':final_rep},safe=False)

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title_main %}Dashboard{% endblock %}
 {% block body_main %}
     {% include "partials/_sidebar_main.html" %}
@@ -33,13 +34,14 @@
       </div>
     </div>
     <div class="container-fluid mt--6">
-      <div class="row">
+      <div class="col-lg-6 col-5"><button id="line" class="btn btn-sm btn-neutral">Line Graph</button><button id="pie" class="btn btn-sm btn-neutral">Pie Chart</button></div>
+      <div class="row mt-4">
         <div class="col-xl-6">
           <div class="card bg-default">
             <div class="card-header bg-transparent">
               <div class="row align-items-center">  
                 <div class="col">
-                  <h5 class="h3 text-white mb-0 text-center">Sales value</h5>
+                  <h5 class="h3 text-white mb-0 text-center">This Month's Expense</h5>
                   <div class="chart-container" style="position: relative; height:500px; width:450px">
                     <canvas id="myChart" class="chart-canvas chartjs-render-monitor" width="450" height="500"></canvas>
                   </div>
@@ -53,7 +55,7 @@
             <div class="card-header bg-transparent">
               <div class="row align-items-center">  
                 <div class="col">
-                  <h5 class="h3 text-white mb-0 text-center">Sales value</h5>
+                  <h5 class="h3 text-white mb-0 text-center">This Month's Income</h5>
                   <div class="chart-container" style="position: relative; height:500px; width:450px">
                     <canvas id="myChart2" class="chart-canvas chartjs-render-monitor" width="450" height="500"></canvas>
                   </div>
@@ -100,81 +102,5 @@
       </div>
     </div>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-<script>
-  var ctx = document.getElementById('myChart');
-  var ctx1 = document.getElementById('myChart2');
-  var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
-        }
-    }
-});
-var myChart = new Chart(ctx1, {
-    type: 'bar',
-    data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
-        }
-    }
-});
-</script/>
+  <script src="{% static 'js/dashboard.js' %}"></script>
 {% endblock %}
