@@ -12,11 +12,8 @@
           <div class="row align-items-center py-4"><div class="col-lg-6 col-7"><nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4"><ol class="breadcrumb breadcrumb-links breadcrumb-dark"><li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li><li class="breadcrumb-item"><a href="{% url 'dashboard' %}">Dashboard</a></li><li class="breadcrumb-item active" aria-current="page">Default</li></ol></nav></div></div>
           <div class="row">
             <div class="col-xl-3 col-md-6"><div class="card card-stats"><div class="card-body"><div class="row"><div class="col"><h5 class="card-title text-uppercase text-muted mb-0">Spent Today</h5><span class="h2 font-weight-bold mb-0">{{ spent_today }}</span></div><div class="col-auto"><div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow"><i class="ni ni-chart-bar-32"></i></div></div></div><p class="mt-3 mb-0 text-sm"><span class="text-nowrap mr-2">No of Expenses: </span><span class="text-danger">{{expenses.count}}</span></p></div></div></div>
-
             <div class="col-xl-3 col-md-6"><div class="card card-stats"><div class="card-body"><div class="row"><div class="col"><h5 class="card-title text-uppercase text-muted mb-0">This Week</h5><span class="h2 font-weight-bold mb-0">{{spent_week}}</span></div><div class="col-auto"><div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow"><i class="ni ni-chart-pie-35"></i></div></div></div><p class="mt-3 mb-0 text-sm"><span class="text-nowrap mr-2">No of Expenses: </span><span class="text-danger">{{spent_week_count}}</span></p></div></div></div>
-
             <div class="col-xl-3 col-md-6"><div class="card card-stats"><div class="card-body"><div class="row"><div class="col"><h5 class="card-title text-uppercase text-muted mb-0">This Month</h5><span class="h2 font-weight-bold mb-0">{{spent_month}}</span></div><div class="col-auto"><div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow"><i class="ni ni-money-coins"></i></div></div></div><p class="mt-3 mb-0 text-sm"><span class="text-nowrap mr-2">No of Expenses: </span><span class="text-danger">{{spent_month_count}}</span></p></div></div></div>
-
             <div class="col-xl-3 col-md-6"><div class="card card-stats"><div class="card-body"><div class="row"><div class="col"><h5 class="card-title text-uppercase text-muted mb-0">This Year</h5><span class="h2 font-weight-bold mb-0">{{spent_year}}</span></div><div class="col-auto"><div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow"><i class="ni ni-chart-bar-32"></i></div></div></div><p class="mt-3 mb-0 text-sm"><span class="text-nowrap mr-2">No of Expenses: </span><span class="text-danger">{{spent_year_count}}</span></p></div></div></div>
           </div>
         </div>
@@ -28,28 +25,14 @@
         <div class="col-xl-6">
           <div class="card bg-default">
             <div class="card-header bg-transparent">
-              <div class="row align-items-center">  
-                <div class="col">
-                  <h5 class="h3 text-white mb-0 text-center">This Month's Expense</h5>
-                  <div class="chart-container" style="position: relative; height:500px; width:450px">
-                    <canvas id="myChart" class="chart-canvas chartjs-render-monitor" width="450" height="500"></canvas>
-                  </div>
-                </div>
-              </div>
+              <div class="row align-items-center"><div class="col"><h5 class="h3 text-white mb-0 text-center">This Month's Expense</h5><div class="chart-container" style="position: relative; height:500px; width:450px"><canvas id="myChart" class="chart-canvas chartjs-render-monitor" width="450" height="500"></canvas></div></div></div>
             </div>
           </div>
         </div>
         <div class="col-xl-6">
           <div class="card bg-default">
             <div class="card-header bg-transparent">
-              <div class="row align-items-center">  
-                <div class="col">
-                  <h5 class="h3 text-white mb-0 text-center">This Month's Income</h5>
-                  <div class="chart-container" style="position: relative; height:500px; width:450px">
-                    <canvas id="myChart2" class="chart-canvas chartjs-render-monitor" width="450" height="500"></canvas>
-                  </div>
-                </div>
-              </div>
+              <div class="row align-items-center">  <div class="col"><h5 class="h3 text-white mb-0 text-center">This Month's Income</h5><div class="chart-container" style="position: relative; height:500px; width:450px"><canvas id="myChart2" class="chart-canvas chartjs-render-monitor" width="450" height="500"></canvas></div></div></div>
             </div>
           </div>
         </div>
