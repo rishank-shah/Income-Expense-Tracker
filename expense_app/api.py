@@ -36,7 +36,7 @@ def expense_summary(request):
     category_list = list(set(map(get_category,expenses)))
     def get_expense_category_amount(category):
         amount = 0
-        category = ExpenseCategory.objects.get(name=category)
+        category = ExpenseCategory.objects.get(user=request.user,name=category)
         filtered_by_category = expenses.filter(category=category.id)
         for i in filtered_by_category:
             amount += i.amount

@@ -36,7 +36,7 @@ def income_summary(request):
     source_list = list(set(map(get_source,incomes)))
     def get_income_source_amount(source):
         amount = 0
-        source = IncomeSource.objects.get(source=source)
+        source = IncomeSource.objects.get(user = request.user,source=source)
         filtered_by_source = incomes.filter(source=source.id)
         for i in filtered_by_source:
             amount += i.amount

@@ -9,22 +9,7 @@
         <div class="col-md-1"></div>
         <div class="col-md-6">{% include "partials/_messages.html" %}</div>
       </div>
-      <div class="container-fluid">
-        <div class="header-body">
-          <div class="row align-items-center py-4">
-            <div class="col-lg-6 col-7">
-              <h6 class="h2 text-white d-inline-block mb-0">Income</h6>
-              <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
-                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                  <li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i></a></li>
-                  <li class="breadcrumb-item"><a href="{% url 'income' %}">Income</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Add Source</li>
-                </ol>
-              </nav>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div class="container-fluid"><div class="header-body"><div class="row align-items-center py-4"><div class="col-lg-6 col-7"><nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4"><ol class="breadcrumb breadcrumb-links breadcrumb-dark"><li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i></a></li><li class="breadcrumb-item"><a href="{% url 'income' %}">Income</a></li><li class="breadcrumb-item active" aria-current="page">Add Source</li></ol></nav></div></div></div></div>
     </div>
     <div class="container-fluid mt--6">
       <div class="row">
@@ -38,7 +23,7 @@
                     {% csrf_token %}
                     <div class="form-group"><label for="">Source</label><input class="form-control form-control-sm" type = "text" name="source" value = "{{ values.source }}" ></div>
                     <div class="text-center"><button type="submit" class="btn btn-primary">Save Source</button></div>
-                </form>
+                  </form>
                 </div>
               </div>
             </div>
