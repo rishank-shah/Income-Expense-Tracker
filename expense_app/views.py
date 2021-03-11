@@ -10,6 +10,7 @@ from django.http import HttpResponse
 from django.db.models import Sum
 import xlwt
 from .utils import queryset_filter
+import csv
 
 @login_required(login_url='login')
 def expense_page(request):
@@ -194,4 +195,17 @@ def download_as_excel(request,filter_by):
     ws.write(row_number,0,'TOTAL',style)
     ws.write(row_number,3,str(expenses.aggregate(Sum('amount'))['amount__sum']),style)
     wb.save(response)
+    return response
+
+@login_required(login_url='login')
+def download_as_csv(request,filter_by):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=Expenses'+ str(request.user.username) + str(localtime()) + ".csv"
+    writer = csv.writer(response)
+    writer.writerow(['Date','Category','Description','Amount'])
+    expenses = queryset_filter(User.objects.get(username=request.user.username),filter_by).order_by('date')
+    for expense in expenses:
+        writer.writerow([expense.date,expense.category.name,expense.description,expense.amount])
+    writer.writerow(['','','',''])
+    writer.writerow(['TOTAL','','',str(expenses.aggregate(Sum('amount'))['amount__sum'])])
     return response

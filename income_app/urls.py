@@ -12,4 +12,5 @@ urlpatterns = [
     path('income-summary-data',api.income_summary,name="income_summary_data"),
     path('income-summary/',TemplateView.as_view(template_name="income_app/income_summary.html"),name="income_summary"),
     path('download-excel/<str:filter_by>',views.download_as_excel,name = 'income_download_as_excel'),
+    path('download-csv/<str:filter_by>',views.download_as_csv,name = 'income_download_as_csv'),
 ]

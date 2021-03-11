@@ -24,6 +24,7 @@ urlpatterns = [
     path('', TemplateView.as_view(template_name="index.html")),
     path('download-data/', TemplateView.as_view(template_name="download_data.html"),name="download_data"),
     path('download-data/complete-spreadsheet/excel',views.complete_spreadsheet_excel,name="complete_spreadsheet_excel"),
+    path('download-data/complete-spreadsheet/csv',views.complete_spreadsheet_csv,name="complete_spreadsheet_csv"),
     path('dashboard/',views.dashboard,name="dashboard"),
     path('auth/',include('auth_app.urls')),
     path('expense/',include('expense_app.urls')),

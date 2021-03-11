@@ -6,6 +6,7 @@ from datetime import timedelta
 from django.db.models import Sum
 from django.http import HttpResponse
 import xlwt
+import csv
 from django.utils.timezone import localtime
 
 @login_required(login_url='login')
@@ -82,4 +83,26 @@ def complete_spreadsheet_excel(request):
     style = xlwt.easyxf('pattern: pattern solid, fore_colour light_blue;''font: colour red, bold True;')
     ws.write(row_number,7,str(income_total - expense_total),style)
     wb.save(response)
+    return response
+
+@login_required(login_url='login')
+def complete_spreadsheet_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=Incomes'+ str(request.user.username) + str(localtime()) + ".csv"
+    writer = csv.writer(response)
+    writer.writerow(['Date','Source','Category','Description','Amount In', 'Amount Out'])
+    incomes = Income.objects.filter(user=request.user).order_by('date')
+    expenses = Expense.objects.filter(user=request.user).order_by('date')
+    income_list = incomes.values_list('date','source__source','description','amount')
+    expense_list = expenses.values_list('date','category__name','description','amount')
+    writer.writerow(['','','',''])
+    for income in incomes:
+        writer.writerow([income.date,income.source.source,'',income.description,income.amount])
+    writer.writerow(['','','',''])
+    for expense in expenses:
+        writer.writerow([expense.date,'',expense.category.name,'',expense.description,'',expense.amount])
+    writer.writerow(['','','',''])
+    income_total = incomes.aggregate(Sum('amount'))['amount__sum']
+    expense_total = expenses.aggregate(Sum('amount'))['amount__sum']
+    writer.writerow(['TOTAL','','','',income_total,expense_total,'BALANCE',(income_total - expense_total)])
     return response
