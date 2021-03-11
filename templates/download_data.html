@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title_main %}Download Data{% endblock %}
+{% block body_main %}
+    {% include "partials/_sidebar_main.html" %}
+  <div class="main-content bg-primary" id="panel">
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    {% include "partials/_navbar_main.html" %}
+    <div class="header bg-primary pb-6">
+      <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-6">{% include "partials/_messages.html" %}</div>
+      </div>
+      <div class="container-fluid"><div class="header-body"><div class="row align-items-center py-4"><div class="col-lg-6 col-7"><nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4"><ol class="breadcrumb breadcrumb-links breadcrumb-dark"><li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i></a></li><li class="breadcrumb-item active" aria-current="page"><a href="{% url 'download_data' %}">Download Data</a></li></ol></nav></div><div class="col-lg-5 col-2 text-right"><div class="dropdown"><button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Download Options</button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <button id="download_by_today" class="dropdown-item">Today</button>
+          <button id="download_by_week" class="dropdown-item">Week</button>
+          <button id="download_by_month" class="dropdown-item">Month</button>
+          <button id="download_by_year" class="dropdown-item">Year</button>
+        </div>
+      </div></div></div></div></div>
+    </div>
+    <div class="container-fluid mt--6">
+      <div class="row">
+        <div class="col mr-5 ml-5 mt-4 mb-3">
+            <span style="display: none; font-size: small;" class="text-white" id="name_for_download">(Selected : )</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col mr-5 ml-5 mt-4 mb-3">
+            <h2 class="text-white">Expense</h2>
+            <button id="month" class="btn btn-neutral">Download as Csv</button>
+            <button id="month" class="btn btn-neutral">Download as Pdf</button>
+            <a id="download_as_excel_expense" href="{% url 'download_as_excel' 'year' %}" class="btn btn-neutral">Download as Excel</a>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col mr-5 ml-5 mt-5">
+            <h2 class="text-white">Income</h2>
+            <button id="month" class="btn btn-neutral">Download as Csv</button>
+            <button id="month" class="btn btn-neutral">Download as Pdf</button>
+            <button id="month" class="btn btn-neutral">Download as Excel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <script src="{% static 'js/download_data.js' %}"></script>
+{% endblock %}

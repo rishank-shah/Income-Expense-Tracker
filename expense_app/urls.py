@@ -10,5 +10,6 @@ urlpatterns = [
     path('edit-expense/<int:id>/',views.edit_expense,name="edit_expense"),
     path('delete-expense/<int:id>/',views.delete_expense,name="delete_expense"),
     path('expense-summary-data',api.expense_summary,name="expense_summary_data"),
-    path('expense-summary/',TemplateView.as_view(template_name="expense_app/expense_summary.html"),name="expense_summary")
+    path('expense-summary/',TemplateView.as_view(template_name="expense_app/expense_summary.html"),name="expense_summary"),
+    path('download-excel/<str:filter_by>',views.download_as_excel,name = 'download_as_excel'),
 ]

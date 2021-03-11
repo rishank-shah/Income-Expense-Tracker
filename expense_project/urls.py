@@ -22,6 +22,7 @@ from . import views
 
 urlpatterns = [
     path('', TemplateView.as_view(template_name="index.html")),
+    path('download-data/', TemplateView.as_view(template_name="download_data.html"),name="download_data"),
     path('dashboard/',views.dashboard,name="dashboard"),
     path('auth/',include('auth_app.urls')),
     path('expense/',include('expense_app.urls')),
