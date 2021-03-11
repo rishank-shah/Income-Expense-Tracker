@@ -10,5 +10,6 @@ urlpatterns = [
     path('edit-income/<int:id>/',views.edit_income,name="edit_income"),
     path('delete-income/<int:id>/',views.delete_income,name="delete_income"),
     path('income-summary-data',api.income_summary,name="income_summary_data"),
-    path('income-summary/',TemplateView.as_view(template_name="income_app/income_summary.html"),name="income_summary")
+    path('income-summary/',TemplateView.as_view(template_name="income_app/income_summary.html"),name="income_summary"),
+    path('download-excel/<str:filter_by>',views.download_as_excel,name = 'income_download_as_excel'),
 ]

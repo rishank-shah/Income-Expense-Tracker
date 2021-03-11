@@ -6,6 +6,10 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from user_profile.models import UserProfile
 from django.utils.timezone import localtime
+from django.http import HttpResponse
+from django.db.models import Sum
+import xlwt
+from .utils import queryset_filter
 
 @login_required(login_url='login')
 def income_page(request):
@@ -160,3 +164,34 @@ def delete_income(request,id):
     else:
         messages.error(request,'Something went Wrong. Please Try Again')
         return redirect('income')
+
+@login_required(login_url='login')
+def download_as_excel(request,filter_by):
+    filter_by = str(filter_by)
+    response = HttpResponse(content_type = 'application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=Incomes-'+ str(request.user.username) + str(localtime())+".xls"
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Incomes')
+    if filter_by != '':
+        ws.write(0,0,f"Incomes in {filter_by.lower().capitalize()}")
+    else:
+        ws.write(0,0,f"Incomes in Year")
+    row_number = 1
+    fontStyle = xlwt.XFStyle()
+    fontStyle.font.bold = True
+    columns = ['Date','Source','Description','Amount']
+    for col_num in range(len(columns)):
+        ws.write(row_number,col_num,columns[col_num],fontStyle)
+    fontStyle = xlwt.XFStyle()
+    incomes = queryset_filter(User.objects.get(username=request.user.username),filter_by).order_by('date')
+    rows = incomes.values_list('date','source__source','description','amount')
+    for row in rows:
+        row_number += 1
+        for col_num in range(len(row)):
+            ws.write(row_number,col_num,str(row[col_num]),fontStyle)
+    row_number +=2
+    style = xlwt.easyxf('font: colour red, bold True;')
+    ws.write(row_number,0,'TOTAL',style)
+    ws.write(row_number,3,str(incomes.aggregate(Sum('amount'))['amount__sum']),style)
+    wb.save(response)
+    return response
