@@ -158,7 +158,10 @@ def complete_spreadsheet_pdf(request):
         'total_expense':total_expense,
         'total_income':total_income,
         'currency':currency,
-        'balance':balance
+        'balance':balance,
+        'first_name':request.user.first_name,
+        'last_name':request.user.last_name,
+        'username':request.user.username,
     })
     
     html = HTML(string=html_string)

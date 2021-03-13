@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 import os
 from django.contrib import messages
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,12 +27,12 @@ MEDIA_DIR = os.path.join(BASE_DIR,'media')
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '972(!7o4uqq-mticcolua5a!y#i8%_f^=@m$j^na=hk^nnm!by'
+SECRET_KEY = os.environ.get('SECRET_KEY','972(!7o4uqq-mticcolua5a!y#i8%_f^=@m$j^na=hk^nnm!by')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['expense-income-django.herokuapp.com','127.0.0.1']
 
 
 # Application definition
@@ -40,6 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary_storage',
+    'cloudinary',
     'auth_app',
     'expense_app',
     'user_profile',
@@ -144,6 +150,14 @@ STATIC_ROOT = os.path.join(BASE_DIR,'static')
 MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
 
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+CLOUDINARY_STORAGE = {
+  'CLOUD_NAME': 'dnvdc2d28',
+  'API_KEY': int(os.environ.get('API_KEY')), 
+  'API_SECRET': str(os.environ.get('API_SECRET')),
+}
+
 MESSAGE_TAGS = {
     messages.ERROR : 'danger',
 }
@@ -155,3 +169,5 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
 EMAIL_PORT = 587
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+
+django_heroku.settings(locals())

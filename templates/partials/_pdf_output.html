@@ -7,11 +7,18 @@
         <title>{{title}}</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-        <style>@page{size:'A4';margin:2.5cm 1.5cm 3.5cm 1.5cm}</style>
+        <style>@page{size:'A4';margin:1.0cm 1.5cm 3.5cm 1.5cm}</style>
     </head>
     <body>
-        <div class="text-center"><img style="width:200px;height:200px" src="https://t4.ftcdn.net/jpg/03/46/93/61/360_F_346936114_RaxE6OQogebgAWTalE1myseY1Hbb5qPM.jpg"></div>
-        <h2 class="mb-3 mt-3 text-center">Income Expense List</h2>
+        <div class="text-center">
+            <p >First Name: <b>{{first_name}} </b> Last Name: <b>{{last_name}} </b> Username: <b>{{username}} </b></p>
+            {% if profile_pic %}
+                <img class="rounded-circle account-img text-right" style="width:200px;height:200px" src="{{ profile_pic.url }}">
+            {% else %}
+                <img style="width:200px;height:200px" src="https://t4.ftcdn.net/jpg/03/46/93/61/360_F_346936114_RaxE6OQogebgAWTalE1myseY1Hbb5qPM.jpg">
+            {% endif %}
+        </div>
+        <h2 class="mb-4 mt-4 text-center">Income Expense List</h2>
         <table class="table">
             <thead><tr><th scope="col">Date</th><th scope="col">Source</th><th scope="col">Category</th><th scope="col">Description</th><th scope="col">Amount - {{currency}}</th></tr></thead>
             <tbody>
