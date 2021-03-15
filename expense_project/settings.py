@@ -30,9 +30,9 @@ MEDIA_DIR = os.path.join(BASE_DIR,'media')
 SECRET_KEY = os.environ.get('SECRET_KEY','972(!7o4uqq-mticcolua5a!y#i8%_f^=@m$j^na=hk^nnm!by')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['expense-income-django.herokuapp.com','127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1','localhost']
 
 
 # Application definition
