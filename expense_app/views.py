@@ -6,11 +6,13 @@ from django.utils.timezone import localtime
 from user_profile.models import UserProfile
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.db.models import Sum
 import xlwt
 from .utils import queryset_filter
 import csv
+from django.db.models import Q
+import json
 
 @login_required(login_url='login')
 def expense_page(request):
@@ -249,3 +251,17 @@ def download_as_csv(request,filter_by):
     writer.writerow(['','','',''])
     writer.writerow(['TOTAL','','',str(expenses.aggregate(Sum('amount'))['amount__sum'])])
     return response
+
+@login_required(login_url='login')
+def search_expense(request):
+    if request.method == 'POST':
+        query = json.loads(request.body).get('search_query')
+        
+        user_expenses = Expense.objects.filter(user = request.user)
+        expenses = user_expenses.filter(Q(amount__istartswith = query) | Q(date__istartswith = query)| Q(description__icontains = query) | Q(category__name__icontains = query))
+        filtered_results = expenses.values('id','amount','description','category__name','date')
+		
+        return JsonResponse(
+            list(filtered_results)
+            ,safe=False
+        )

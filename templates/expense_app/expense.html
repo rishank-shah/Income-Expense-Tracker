@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title_main %}Expenses{% endblock %}
 {% block body_main %}
     {% include "partials/_sidebar_main.html" %}
@@ -9,7 +10,7 @@
         <div class="col-md-2"></div>
         <div class="col-md-6">{% include "partials/_messages.html" %}</div>
       </div>
-    <div class="container-fluid"><div class="header-body"><div class="row align-items-center py-4"><div class="col-lg-6 col-7"><nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4"><ol class="breadcrumb breadcrumb-links breadcrumb-dark"><li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i></a></li><li class="breadcrumb-item"><a href="{% url 'expense' %}">Expense</a></li><li class="breadcrumb-item active" aria-current="page">View</li></ol></nav></div><div class="col-lg-6 col-5 text-right"><a href="{% url 'add_expense' %}" class="btn btn btn-neutral">Create New</a></div></div></div></div></div>
+    <div class="container-fluid"><div class="header-body"><div class="row align-items-center py-4"><div class="col-lg-5 col-6"><nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4"><ol class="breadcrumb breadcrumb-links breadcrumb-dark"><li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i></a></li><li class="breadcrumb-item"><a href="{% url 'expense' %}">Expense</a></li><li class="breadcrumb-item active" aria-current="page">View</li></ol></nav></div><div class="col-md-5 text-right"><span class="navbar-search navbar-search-light form-inline mr-sm-3" id="navbar-search-main"><div class="form-group mb-0"><div class="input-group input-group-alternative input-group-merge"><div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-search"></i></span></div><input class="form-control" id ="searchField" placeholder="Search" type="text"></div></div></span></div><div class="col-md-2 text-right"><a href="{% url 'add_expense' %}" class="btn btn btn-neutral">Create New</a></div></div></div></div></div>
     <div class="container-fluid mt--6">
       <div class="row">
         <div class="col">
@@ -18,34 +19,15 @@
               <div class="row align-items-center">  
                 <div class="col">
                   {% if expenses %}
-                    <h5 class="h3 text-white mb-0 text-center">My Expenses - {{ expenses.count }}</h5>
+                    <h5 class="h3 text-white mb-0 text-center">My Expenses - <span id="expense_count">{{ expenses.count }}</span></h5>
                     <div class="app-table mt-5">
-                      <table class="table text-white">
-                        <thead>
-                          <tr>
-                            <th style="font-size: small;">Amount ({{currency}})</th>
-                            <th style="font-size: small;">Category</th>
-                            <th style="font-size: small;">Description</th>
-                            <th style="font-size: small;">Date</th>
-                            <th style="font-size: small;">Action</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {% for expense in page_expenses %}
-                            <tr>
-                              <td>{{expense.amount}}</td>
-                              <td>{{expense.category.name}}</td>
-                              <td>{{expense.description}}</td>
-                              <td>{{expense.date}}</td>
-                              <td><a href="{% url 'edit_expense' expense.id %}" class="btn btn-warning btn-sm">Edit</a></td>
-                            </tr>
-                          {% endfor %}
-                        </tbody>
+                      <table id="table-complete" class="table text-white">
+                        <thead><tr><th style="font-size: small;">Amount ({{currency}})</th><th style="font-size: small;">Category</th><th style="font-size: small;">Description</th><th style="font-size: small;">Date</th><th style="font-size: small;">Action</th></tr></thead>
+                        <tbody id="table-body-data" >{% for expense in page_expenses %}<tr><td>{{expense.amount}}</td><td>{{expense.category.name}}</td><td>{{expense.description}}</td><td>{{expense.date}}</td><td><a href="{% url 'edit_expense' expense.id %}" class="btn btn-warning btn-sm">Edit</a></td></tr>{% endfor %}</tbody>
                       </table>
                     </div>
-                  {% else %}
-                    <h5 class="h3 text-white mb-0 text-center">No expenses.</h5>
-                  {% endif %}
+                  {% else %}<h5 class="h3 text-white mb-0 text-center">No expenses.</h5>{% endif %}
+                  <h5 style="display: none;" id="no-results" class="h3 text-danger mt-5 mb-0 text-center">No expenses found for searched item.</h5>
                 </div>
               </div>
             </div>
@@ -67,4 +49,5 @@
       </div>
     </div>
   </div>
+  <script src="{% static 'js/expense_search.js' %}"></script>
 {% endblock %}

@@ -13,4 +13,5 @@ urlpatterns = [
     path('expense-summary/',TemplateView.as_view(template_name="expense_app/expense_summary.html"),name="expense_summary"),
     path('download-excel/<str:filter_by>',views.download_as_excel,name = 'download_as_excel'),
     path('download-csv/<str:filter_by>',views.download_as_csv,name = 'download_as_csv'),
+    path('search',views.search_expense,name="expense_search")
 ]
