@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title_main %}Incomes{% endblock %}
 {% block body_main %}
     {% include "partials/_sidebar_main.html" %}
@@ -9,7 +10,7 @@
         <div class="col-md-2"></div>
         <div class="col-md-6">{% include "partials/_messages.html" %}</div>
       </div>
-      <div class="container-fluid"><div class="header-body"><div class="row align-items-center py-4"><div class="col-lg-5 col-6"><nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4"><ol class="breadcrumb breadcrumb-links breadcrumb-dark"><li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i></a></li><li class="breadcrumb-item"><a href="{% url 'income' %}">Income</a></li><li class="breadcrumb-item active" aria-current="page">View</li></ol></nav></div><div class="col-md-5 text-right"><form class="navbar-search navbar-search-light form-inline mr-sm-3" id="navbar-search-main"><div class="form-group mb-0"><div class="input-group input-group-alternative input-group-merge"><div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-search"></i></span></div><input class="form-control" placeholder="Search" type="text"></div></div><button type="button" class="close" data-action="search-close" data-target="#navbar-search-main" aria-label="Close"><span aria-hidden="true">×</span></button></form></div><div class="col-md-2 text-right"><a href="{% url 'add_income' %}" class="btn btn btn-neutral">Create New</a></div></div></div></div></div>
+      <div class="container-fluid"><div class="header-body"><div class="row align-items-center py-4"><div class="col-lg-5 col-6"><nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4"><ol class="breadcrumb breadcrumb-links breadcrumb-dark"><li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i></a></li><li class="breadcrumb-item"><a href="{% url 'income' %}">Income</a></li><li class="breadcrumb-item active" aria-current="page">View</li></ol></nav></div><div class="col-md-5 text-right"><form class="navbar-search navbar-search-light form-inline mr-sm-3" id="navbar-search-main"><div class="form-group mb-0"><div class="input-group input-group-alternative input-group-merge"><div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-search"></i></span></div><input class="form-control" id ="searchField" placeholder="Search" type="text"></div></div><button type="button" class="close" data-action="search-close" data-target="#navbar-search-main" aria-label="Close"><span aria-hidden="true">×</span></button></form></div><div class="col-md-2 text-right"><a href="{% url 'add_income' %}" class="btn btn btn-neutral">Create New</a></div></div></div></div></div>
     <div class="container-fluid mt--6">
       <div class="row">
         <div class="col">
@@ -18,14 +19,15 @@
               <div class="row align-items-center">  
                 <div class="col">
                   {% if incomes %}
-                    <h5 class="h3 text-white mb-0 text-center">My Incomes - {{ incomes.count }}</h5>
+                    <h5 class="h3 text-white mb-0 text-center">My Incomes - <span id="income_count">{{ incomes.count }}</span></h5>
                     <div class="app-table mt-5">
-                      <table class="table text-white">
+                      <table id="table-complete" class="table text-white">
                         <thead><tr><th style="font-size: small;">Amount ({{currency}})</th><th style="font-size: small;">Source</th><th style="font-size: small;">Description</th><th style="font-size: small;">Date</th><th style="font-size: small;">Action</th></tr></thead>
-                        <tbody>{% for income in page_incomes %}<tr><td>{{income.amount}}</td><td>{{income.source.source}}</td><td>{{income.description}}</td><td>{{income.date}}</td><td><a href="{% url 'edit_income' income.id %}" class="btn btn-warning btn-sm">Edit</a></td></tr>{% endfor %}</tbody>
+                        <tbody id="table-body-data">{% for income in page_incomes %}<tr><td>{{income.amount}}</td><td>{{income.source.source}}</td><td>{{income.description}}</td><td>{{income.date}}</td><td><a href="{% url 'edit_income' income.id %}" class="btn btn-warning btn-sm">Edit</a></td></tr>{% endfor %}</tbody>
                       </table>
                     </div>
                   {% else %}<h5 class="h3 text-white mb-0 text-center">No incomes. Create <a href="{% url 'add_income' %}">one</a></h5>{% endif %}
+                  <h5 style="display: none;" id="no-results" class="h3 text-danger mt-5 mb-0 text-center">No incomes found for searched item.</h5>
                 </div>
               </div>
             </div>
@@ -47,4 +49,5 @@
       </div>
     </div>
   </div>
+  <script src="{% static 'js/income_search.js' %}"></script>
 {% endblock %}

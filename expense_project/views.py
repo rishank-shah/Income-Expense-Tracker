@@ -49,7 +49,7 @@ def dashboard(request):
 @login_required(login_url='login')
 def complete_spreadsheet_excel(request):
     response = HttpResponse(content_type = 'application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename=Incomes-Expenses-'+ str(request.user.username) + str(localtime())+".xls"
+    response['Content-Disposition'] = 'attachment; filename=Incomes-Expenses-'+ str(request.user.username) + '-' + str(localtime())+".xls"
 
     wb = xlwt.Workbook(encoding='utf-8')
     ws = wb.add_sheet('All Data')
@@ -92,17 +92,22 @@ def complete_spreadsheet_excel(request):
     income_total = incomes.aggregate(Sum('amount'))['amount__sum']
     expense_total = expenses.aggregate(Sum('amount'))['amount__sum']
 
+    try:
+        balance = str(income_total - expense_total)
+    except TypeError:
+        balance = 'None'
+    
     ws.write(row_number,4,str(income_total),style)
     ws.write(row_number,5,str(expense_total),style)
     style = xlwt.easyxf('pattern: pattern solid, fore_colour light_blue;''font: colour red, bold True;')
-    ws.write(row_number,7,str(income_total - expense_total),style)
+    ws.write(row_number,7,balance,style)
     wb.save(response)
     return response
 
 @login_required(login_url='login')
 def complete_spreadsheet_csv(request):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=Incomes'+ str(request.user.username) + str(localtime()) + ".csv"
+    response['Content-Disposition'] = 'attachment; filename=Incomes-Expenses-'+ str(request.user.username) + "-" + str(localtime()) + ".csv"
     
     writer = csv.writer(response)
     writer.writerow(['Date','Source','Category','Description','Amount In', 'Amount Out'])
@@ -122,13 +127,19 @@ def complete_spreadsheet_csv(request):
 
     income_total = incomes.aggregate(Sum('amount'))['amount__sum']
     expense_total = expenses.aggregate(Sum('amount'))['amount__sum']
-    writer.writerow(['TOTAL','','','',income_total,expense_total,'BALANCE',(income_total - expense_total)])
+
+    try:
+        balance = str(income_total - expense_total)
+    except TypeError:
+        balance = 'None'
+
+    writer.writerow(['TOTAL','','','',income_total,expense_total,'BALANCE',balance])
     return response
 
 @login_required(login_url='login')
 def complete_spreadsheet_pdf(request):
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'inline; attachment; filename=Expenses'+ str(request.user.username) + str(localtime()) + ".pdf"
+    response['Content-Disposition'] = 'inline; attachment; filename=Incomes-Expenses-'+ str(request.user.username) + '-' + str(localtime()) + ".pdf"
     response['Content-Transfer-Encoding'] = 'binary'
 
     profile_pic = None

@@ -203,7 +203,7 @@ def delete_expense(request,id):
 def download_as_excel(request,filter_by):
     filter_by = str(filter_by)
     response = HttpResponse(content_type = 'application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename=Expenses-'+ str(request.user.username) + str(localtime())+".xls"
+    response['Content-Disposition'] = 'attachment; filename=Expenses-'+ str(request.user.username) + '-' + str(localtime())+".xls"
     
     wb = xlwt.Workbook(encoding='utf-8')
     ws = wb.add_sheet('Expenses')
@@ -239,7 +239,7 @@ def download_as_excel(request,filter_by):
 @login_required(login_url='login')
 def download_as_csv(request,filter_by):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=Expenses'+ str(request.user.username) + str(localtime()) + ".csv"
+    response['Content-Disposition'] = 'attachment; filename=Expenses-'+ str(request.user.username) + '-' + str(localtime()) + ".csv"
     
     writer = csv.writer(response)
     writer.writerow(['Date','Category','Description','Amount'])
@@ -255,8 +255,13 @@ def download_as_csv(request,filter_by):
 @login_required(login_url='login')
 def search_expense(request):
     if request.method == 'POST':
-        query = json.loads(request.body).get('search_query')
-        
+        query = json.loads(request.body).get('search_query','')
+
+        if query == '':
+            return JsonResponse({
+                'error':'Not Found'
+            })
+
         user_expenses = Expense.objects.filter(user = request.user)
         expenses = user_expenses.filter(Q(amount__istartswith = query) | Q(date__istartswith = query)| Q(description__icontains = query) | Q(category__name__icontains = query))
         filtered_results = expenses.values('id','amount','description','category__name','date')

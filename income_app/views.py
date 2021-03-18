@@ -6,11 +6,13 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from user_profile.models import UserProfile
 from django.utils.timezone import localtime
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from django.db.models import Sum
 import xlwt
 from .utils import queryset_filter
 import csv
+from django.db.models import Q
+import json
 
 @login_required(login_url='login')
 def income_page(request):
@@ -201,7 +203,7 @@ def delete_income(request,id):
 def download_as_excel(request,filter_by):
     filter_by = str(filter_by)
     response = HttpResponse(content_type = 'application/ms-excel')
-    response['Content-Disposition'] = 'attachment; filename=Incomes-'+ str(request.user.username) + str(localtime())+".xls"
+    response['Content-Disposition'] = 'attachment; filename=Incomes-'+ str(request.user.username) + '-' + str(localtime())+".xls"
     
     wb = xlwt.Workbook(encoding='utf-8')
     ws = wb.add_sheet('Incomes')
@@ -237,7 +239,7 @@ def download_as_excel(request,filter_by):
 @login_required(login_url='login')
 def download_as_csv(request,filter_by):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename=Incomes'+ str(request.user.username) + str(localtime()) + ".csv"
+    response['Content-Disposition'] = 'attachment; filename=Incomes-'+ str(request.user.username) + '-' + str(localtime()) + ".csv"
     
     writer = csv.writer(response)
     writer.writerow(['Date','Source','Description','Amount'])
@@ -249,3 +251,22 @@ def download_as_csv(request,filter_by):
     writer.writerow(['','','',''])
     writer.writerow(['TOTAL','','',str(incomes.aggregate(Sum('amount'))['amount__sum'])])
     return response
+
+@login_required(login_url='login')
+def search_income(request):
+    if request.method == 'POST':
+        query = json.loads(request.body).get('search_query','')
+
+        if query == '':
+            return JsonResponse({
+                'error':'Not Found'
+            })
+        
+        user_incomes = Income.objects.filter(user = request.user)
+        incomes = user_incomes.filter(Q(amount__istartswith = query) | Q(date__istartswith = query)| Q(description__icontains = query) | Q(source__source__icontains = query))
+        filtered_results = incomes.values('id','amount','description','source__source','date')
+		
+        return JsonResponse(
+            list(filtered_results)
+            ,safe=False
+        )
