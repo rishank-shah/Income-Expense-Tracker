@@ -1,13 +1,14 @@
 const searchField = document.querySelector("#searchField");
 const paginationContainer = document.querySelector(".pagination-container");
-const expense_count = document.getElementById('expense_count')
+const expense_count = document.getElementById('expense_count');
+let expense_count_initial = expense_count.innerHTML;
 const tbody = document.querySelector("#table-body-data");
-let expense_list = tbody.innerHTML
-const no_results = document.getElementById('no-results')
+let expense_list = tbody.innerHTML;
+const no_results = document.getElementById('no-results');
 
 searchField.addEventListener("keyup", (e) => {
   const searchValue = e.target.value;
-  no_results.style.display = "none"
+  no_results.style.display = "none";
   if (searchValue.trim().length > 0) {
     paginationContainer.style.display = "none";
     tbody.innerHTML = "";
@@ -23,7 +24,7 @@ searchField.addEventListener("keyup", (e) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        expense_count.innerHTML = data.length
+        expense_count.innerHTML = data.length;
         if (data.length === 0) {
             no_results.style.display = "block";
         } else {
@@ -43,7 +44,8 @@ searchField.addEventListener("keyup", (e) => {
       });
   } else{ 
       paginationContainer.style.display = "block";
-      tbody.innerHTML = expense_list
+      tbody.innerHTML = expense_list;
+      expense_count.innerHTML = expense_count_initial;
     }
 });
 

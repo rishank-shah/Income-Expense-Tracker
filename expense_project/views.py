@@ -92,15 +92,17 @@ def complete_spreadsheet_excel(request):
     income_total = incomes.aggregate(Sum('amount'))['amount__sum']
     expense_total = expenses.aggregate(Sum('amount'))['amount__sum']
 
-    try:
-        balance = str(income_total - expense_total)
-    except TypeError:
-        balance = 'None'
+    if expense_total == None:
+        balance = income_total
+    elif income_total == None:
+        balance = -expense_total
+    else:
+        balance = income_total - expense_total
     
     ws.write(row_number,4,str(income_total),style)
     ws.write(row_number,5,str(expense_total),style)
     style = xlwt.easyxf('pattern: pattern solid, fore_colour light_blue;''font: colour red, bold True;')
-    ws.write(row_number,7,balance,style)
+    ws.write(row_number,7,str(balance),style)
     wb.save(response)
     return response
 
@@ -128,12 +130,14 @@ def complete_spreadsheet_csv(request):
     income_total = incomes.aggregate(Sum('amount'))['amount__sum']
     expense_total = expenses.aggregate(Sum('amount'))['amount__sum']
 
-    try:
-        balance = str(income_total - expense_total)
-    except TypeError:
-        balance = 'None'
+    if expense_total == None:
+        balance = income_total
+    elif income_total == None:
+        balance = -expense_total
+    else:
+        balance = income_total - expense_total
 
-    writer.writerow(['TOTAL','','','',income_total,expense_total,'BALANCE',balance])
+    writer.writerow(['TOTAL','','','',income_total,expense_total,'BALANCE',str(balance)])
     return response
 
 @login_required(login_url='login')

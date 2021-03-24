@@ -1,13 +1,14 @@
 const searchField = document.querySelector("#searchField");
 const paginationContainer = document.querySelector(".pagination-container");
 const income_count = document.getElementById('income_count')
+let income_count_initial = income_count.innerHTML;
 const tbody = document.querySelector("#table-body-data");
-let income_list = tbody.innerHTML
+let income_list = tbody.innerHTML;
 const no_results = document.getElementById('no-results')
 
 searchField.addEventListener("keyup", (e) => {
   const searchValue = e.target.value;
-  no_results.style.display = "none"
+  no_results.style.display = "none";
   if (searchValue.trim().length > 0) {
     paginationContainer.style.display = "none";
     tbody.innerHTML = "";
@@ -23,7 +24,7 @@ searchField.addEventListener("keyup", (e) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        income_count.innerHTML = data.length
+        income_count.innerHTML = data.length;
         if (data.length === 0) {
             no_results.style.display = "block";
         } else {
@@ -43,7 +44,8 @@ searchField.addEventListener("keyup", (e) => {
       });
   } else{ 
       paginationContainer.style.display = "block";
-      tbody.innerHTML = income_list
+      tbody.innerHTML = income_list;
+      income_count.innerHTML = income_count_initial;
     }
 });
 

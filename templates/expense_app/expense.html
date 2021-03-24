@@ -10,7 +10,7 @@
         <div class="col-md-2"></div>
         <div class="col-md-6">{% include "partials/_messages.html" %}</div>
       </div>
-    <div class="container-fluid"><div class="header-body"><div class="row align-items-center py-4"><div class="col-lg-5 col-6"><nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4"><ol class="breadcrumb breadcrumb-links breadcrumb-dark"><li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i></a></li><li class="breadcrumb-item"><a href="{% url 'expense' %}">Expense</a></li><li class="breadcrumb-item active" aria-current="page">View</li></ol></nav></div><div class="col-md-5 text-right"><span class="navbar-search navbar-search-light form-inline mr-sm-3" id="navbar-search-main"><div class="form-group mb-0"><div class="input-group input-group-alternative input-group-merge"><div class="input-group-prepend"><span class="input-group-text"><i class="fas fa-search"></i></span></div><input class="form-control" id ="searchField" placeholder="Search" type="text"></div></div></span></div><div class="col-md-2 text-right"><a href="{% url 'add_expense' %}" class="btn btn btn-neutral">Create New</a></div></div></div></div></div>
+    <div class="container-fluid"><div class="header-body"><div class="row align-items-center py-4"><div class="col-lg-5 col-6"><nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4"><ol class="breadcrumb breadcrumb-links breadcrumb-dark"><li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i></a></li><li class="breadcrumb-item"><a href="{% url 'expense' %}">Expense</a></li><li class="breadcrumb-item active" aria-current="page">View</li></ol></nav></div><div class="col-md-3 text-right ml--5 mr-5"><div class="input-group input-group-alternative input-group-merge"><div class="input-group-prepend"><span style="border-end-start-radius: 50%; border-start-start-radius: 50%;" class="input-group-text"><i class="fas fa-search"></i></span></div><input class="form-control" id ="searchField" placeholder="Search" type="text"><div class="input-group-append"><span style="border-end-end-radius: 50%; border-start-end-radius: 50%;"  class="input-group-text"></span></div></div></div><div class="col-md-2 text-right ml-3 mr--3"><a href="{% url 'add_expense' %}" class="btn btn btn-neutral">Import</a> </div><div class="col-md-2 text-right ml--4"><a href="{% url 'add_expense' %}" class="btn btn btn-neutral">Create New</a></div></div></div></div></div>
     <div class="container-fluid mt--6">
       <div class="row">
         <div class="col">
@@ -26,7 +26,7 @@
                         <tbody id="table-body-data" >{% for expense in page_expenses %}<tr><td>{{expense.amount}}</td><td>{{expense.category.name}}</td><td>{{expense.description}}</td><td>{{expense.date}}</td><td><a href="{% url 'edit_expense' expense.id %}" class="btn btn-warning btn-sm">Edit</a></td></tr>{% endfor %}</tbody>
                       </table>
                     </div>
-                  {% else %}<h5 class="h3 text-white mb-0 text-center">No expenses.</h5>{% endif %}
+                  {% else %}<h5 class="h3 text-white mb-0 text-center">No expenses. Create <a href="{% url 'add_expense' %}">one</a></h5>{% endif %}
                   <h5 style="display: none;" id="no-results" class="h3 text-danger mt-5 mb-0 text-center">No expenses found for searched item.</h5>
                 </div>
               </div>

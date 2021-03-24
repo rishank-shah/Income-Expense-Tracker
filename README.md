@@ -6,6 +6,7 @@
 - [git-bash](https://git-scm.com/downloads)
 - [postgresql](https://www.postgresql.org/download/)
 - [Gmail Account](https://www.google.com/intl/en-GB/gmail/about/#)
+- [Weasy Print](https://weasyprint.readthedocs.io/en/latest/)
 
 #### NOTE : If running on windows please use git-bash
 ### Steps for running project
