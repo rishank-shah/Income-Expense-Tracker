@@ -90,7 +90,8 @@ def add_income_source(request):
     sources = IncomeSource.objects.filter(user=request.user)
     context = {
         'sources' : sources,
-        'values':request.POST
+        'values':request.POST,
+        'create':True
     }
 
     if request.method == 'GET': 
@@ -112,8 +113,46 @@ def add_income_source(request):
         
         messages.success(request,'IncomeSource added')
         return render(request,'income_app/add_income_source.html',{
-            'sources' : sources
+            'sources' : sources,
+            'create':True
         })
+
+@login_required(login_url='login')
+def edit_income_source(request,id):
+    source_obj = IncomeSource.objects.get(user=request.user,pk=id)
+
+    context = {
+        'value' : source_obj.source,
+        'update':True,
+        'id':source_obj.id
+    }
+
+    if request.method == 'GET': 
+        return render(request,'income_app/add_income_source.html',context)
+    
+    if request.method == 'POST':
+        source = request.POST.get('source','')
+        
+        context = {
+            'value':source,
+            'update':True,
+            'id':source_obj.id
+        }
+
+        if source == '':
+            messages.error(request,'IncomeSource cannot be empty')
+            return render(request,'income_app/add_income_source.html',context)
+        
+        source = source.lower().capitalize()
+        if IncomeSource.objects.filter(user=request.user,source = source).exists():
+            messages.error(request,f'Income Source ({source}) already exists.')
+            return render(request,'income_app/add_income_source.html',context)
+        
+        source_obj.source = source
+        source_obj.save()
+        
+        messages.success(request,'Income Source Updated')
+        return redirect('add_income_source')
 
 @login_required(login_url='login')
 def delete_income_source(request,id):

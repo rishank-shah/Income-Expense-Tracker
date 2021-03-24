@@ -6,10 +6,7 @@
   <div class="main-content" id="panel">
     {% include "partials/_navbar_main.html" %}
     <div class="header bg-primary pb-6">
-      <div class="row">
-        <div class="col-md-2"></div>
-        <div class="col-md-6">{% include "partials/_messages.html" %}</div>
-      </div>
+      <div class="mr-5 ml-5"><div class="mr-5 ml-5">{% include "partials/_messages.html" %}</div></div>
       <div class="container-fluid"><div class="header-body"><div class="row align-items-center py-4"><div class="col-lg-5 col-6"><nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4"><ol class="breadcrumb breadcrumb-links breadcrumb-dark"><li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i></a></li><li class="breadcrumb-item"><a href="{% url 'income' %}">Income</a></li><li class="breadcrumb-item active" aria-current="page">View</li></ol></nav></div><div class="col-md-3 text-right ml--5 mr-5"><div class="input-group input-group-alternative input-group-merge"><div class="input-group-prepend"><span style="border-end-start-radius: 50%; border-start-start-radius: 50%;" class="input-group-text"><i class="fas fa-search"></i></span></div><input class="form-control" id ="searchField" placeholder="Search" type="text"><div class="input-group-append"><span style="border-end-end-radius: 50%; border-start-end-radius: 50%;"  class="input-group-text"></span></div></div></div><div class="col-md-2 text-right ml-3 mr--3"><a href="{% url 'add_income' %}" class="btn btn btn-neutral">Import</a> </div><div class="col-md-2 text-right ml--4"><a href="{% url 'add_income' %}" class="btn btn btn-neutral">Create New</a></div></div></div></div></div>
     <div class="container-fluid mt--6">
       <div class="row">

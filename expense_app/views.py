@@ -90,7 +90,8 @@ def add_expense_category(request):
     categories = ExpenseCategory.objects.filter(user=request.user)
     context = {
         'categories' : categories,
-        'values':request.POST
+        'values':request.POST,
+        'create':True
     }
 
     if request.method == 'GET': 
@@ -113,7 +114,45 @@ def add_expense_category(request):
         messages.success(request,'Expense Category added')
         return render(request,'expense_app/add_expense_category.html',{
             'categories' : categories,
+            'create':True
         })
+
+@login_required(login_url='login')
+def edit_expense_category(request,id):
+    category = ExpenseCategory.objects.get(user=request.user,pk=id)
+
+    context = {
+        'value':category.name,
+        'update':True,
+        'id':category.id
+    }
+
+    if request.method == 'GET': 
+        return render(request,'expense_app/add_expense_category.html',context)
+
+    if request.method == 'POST':
+        name = request.POST.get('name','')
+
+        context = {
+            'value':name,
+            'update':True,
+            'id':category.id
+        }
+
+        if name == '':
+            messages.error(request,'Expense Category cannot be empty')
+            return render(request,'expense_app/add_expense_category.html',context)
+        
+        name = name.lower().capitalize()
+        if ExpenseCategory.objects.filter(user=request.user,name = name).exists():
+            messages.error(request,f'Expense Category ({name}) already exists.')
+            return render(request,'expense_app/add_expense_category.html',context)
+        
+        category.name = name
+        category.save()
+
+        messages.success(request,'Expense Category Updated')
+        return redirect('add_expense_category')
 
 @login_required(login_url='login')
 def delete_expense_category(request,id):
