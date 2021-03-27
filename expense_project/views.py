@@ -35,8 +35,8 @@ def dashboard(request):
     spent_year = expenses_year.aggregate(Sum('amount'))
 
     return render(request,'dashboard.html',{
-        'expenses':expenses_today,
-        'incomes':incomes_today,
+        'expenses':expenses_today[:5],
+        'incomes':incomes_today[:5],
         'spent_today':spend_today['amount__sum'],
         'spent_month':spent_month['amount__sum'],
         'spent_month_count':spent_month_count,

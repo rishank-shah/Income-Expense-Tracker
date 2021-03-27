@@ -5,7 +5,7 @@
 - [Requirements](#requirements-for-running-project)
 - [Steps for running project](#steps-for-running-project)
 
-### Main Features :
+### Main Features
 * Add Expenses and Incomes by different catgeory and source.
 * Users can export their expenses and incomes in an excel and csv. (filters are present to download data by year, week, month and today)
 * Visualize data by a graph. Graphs are using filtering to show data of month, year, week and today.
