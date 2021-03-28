@@ -15,7 +15,7 @@ from django.db.models import Q
 import json
 import pandas as pd
 import datetime
-from .utils import send_success_mail,send_error_mail
+from .utils import expense_send_success_mail,expense_send_error_mail
 
 @login_required(login_url='login')
 def expense_page(request):
@@ -98,24 +98,24 @@ def add_expense_category(request):
     }
 
     if request.method == 'GET': 
-        return render(request,'expense_app/add_expense_category.html',context)
+        return render(request,'expense_app/expense_category_import.html',context)
 
     if request.method == 'POST':
         name = request.POST.get('name','')
 
         if name == '':
             messages.error(request,'Expense Category cannot be empty')
-            return render(request,'expense_app/add_expense_category.html',context)
+            return render(request,'expense_app/expense_category_import.html',context)
         
         name = name.lower().capitalize()
         if ExpenseCategory.objects.filter(user=request.user,name = name).exists():
             messages.error(request,f'Expense Category ({name}) already exists.')
-            return render(request,'expense_app/add_expense_category.html',context)
+            return render(request,'expense_app/expense_category_import.html',context)
         
         ExpenseCategory.objects.create(user=request.user,name = name).save()
 
         messages.success(request,'Expense Category added')
-        return render(request,'expense_app/add_expense_category.html',{
+        return render(request,'expense_app/expense_category_import.html',{
             'categories' : categories,
             'create':True
         })
@@ -131,7 +131,7 @@ def edit_expense_category(request,id):
     }
 
     if request.method == 'GET': 
-        return render(request,'expense_app/add_expense_category.html',context)
+        return render(request,'expense_app/expense_category_import.html',context)
 
     if request.method == 'POST':
         name = request.POST.get('name','')
@@ -144,12 +144,12 @@ def edit_expense_category(request,id):
 
         if name == '':
             messages.error(request,'Expense Category cannot be empty')
-            return render(request,'expense_app/add_expense_category.html',context)
+            return render(request,'expense_app/expense_category_import.html',context)
         
         name = name.lower().capitalize()
         if ExpenseCategory.objects.filter(user=request.user,name = name).exists():
             messages.error(request,f'Expense Category ({name}) already exists.')
-            return render(request,'expense_app/add_expense_category.html',context)
+            return render(request,'expense_app/expense_category_import.html',context)
         
         category.name = name
         category.save()
@@ -315,7 +315,7 @@ def search_expense(request):
 
 @login_required(login_url='login')
 def import_expense(request):
-    return render(request,'expense_app/add_expense_category.html',{
+    return render(request,'expense_app/expense_category_import.html',{
         'upload':True
     })
 
@@ -324,10 +324,16 @@ def upload_csv(request):
 
     if request.method == 'POST':
         try:
-            csv_file = request.FILES.get('csv_file')
+            csv_file = request.FILES.get('expense_csv_file')
+            
+            if csv_file == None:
+                messages.error(request,'CSV file required')
+                return redirect('import_expense')
+                
             if not csv_file.name.endswith('.csv'):
                 messages.error(request,'Please Upload a CSV file.')
                 return redirect('import_expense')
+            
             csv = pd.read_csv(csv_file)
             csv.columns = [c.lower() for c in csv.columns]
 
@@ -336,7 +342,8 @@ def upload_csv(request):
             else:
                 csv_expense_category = ExpenseCategory.objects.create(user = request.user, name='Loaded From Csv')
                 csv_expense_category.save()
-            
+
+            expense_count = 0
             for i,row in csv.iterrows():
                 if not pd.isna(row['date']):
                     date = row['date'].split('-')
@@ -370,13 +377,14 @@ def upload_csv(request):
                         description = description,
                         category = category
                     ).save()
+                    expense_count += 1
             
-            send_success_mail(request,csv_file.name,i+1)
+            expense_send_success_mail(request,csv_file.name,expense_count)
             messages.success(request,'Expenses will be saved from csv file in a few seconds.')
             return redirect('expense')
         
         except Exception as e:
-            send_error_mail(request,csv_file.name)
+            expense_send_error_mail(request,csv_file.name)
             messages.error(request,'Please Check if the format of csv file is correct.')
             print(repr(e))
             return redirect('import_expense')

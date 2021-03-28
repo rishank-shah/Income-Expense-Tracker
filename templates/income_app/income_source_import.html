@@ -1,12 +1,13 @@
 {% extends "base.html" %}
-{% block title_main %}Income Source{% endblock %}
+{% load static %}
+{% block title_main %}{% if create %}Add Income Source{% elif update %}Edit Income Source{% elif upload %}Import Income{% endif %}{% endblock %}
 {% block body_main %}
     {% include "partials/_sidebar_main.html" %}
   <div class="main-content bg-primary" id="panel">
     {% include "partials/_navbar_main.html" %}
     <div class="header bg-primary pb-6">
       <div class="mr-5 ml-5"><div class="mr-5 ml-5">{% include "partials/_messages.html" %}</div></div>
-      <div class="container-fluid"><div class="header-body"><div class="row align-items-center py-4"><div class="col-lg-6 col-7"><nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4"><ol class="breadcrumb breadcrumb-links breadcrumb-dark"><li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i></a></li><li class="breadcrumb-item"><a href="{% url 'income' %}">Income</a></li><li class="breadcrumb-item active" aria-current="page">{% if create %}Add Source{% elif update %}Edit Source{% endif %}</li></ol></nav></div></div></div></div>
+      <div class="container-fluid"><div class="header-body"><div class="row align-items-center py-4"><div class="col-lg-6 col-7"><nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4"><ol class="breadcrumb breadcrumb-links breadcrumb-dark"><li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i></a></li><li class="breadcrumb-item"><a href="{% url 'income' %}">Income</a></li><li class="breadcrumb-item active" aria-current="page">{% if create %}Add Source{% elif update %}Edit Source{% elif upload %}Import{% endif %}</li></ol></nav></div></div></div></div>
     </div>
     <div class="container-fluid mt--6">
       <div class="row">
@@ -29,6 +30,20 @@
                       <div class="form-group"><label for="">Source</label><input class="form-control form-control-sm" type = "text" name="source" value = "{{ value }}" ></div>
                       <div class="text-center"><button type="submit" class="btn btn-primary">Update Source</button></div>
                     </form>
+                    {% elif upload %}
+                      <h5 class="h3 mb-0 text-center">Import Incomes From CSV</h5>
+                      <p class="text-black mt-2">Please Note: The columns should be Date of Income in the Format of DD-MM-YY, Source, Description, Amount. You Can Download an example csv <a href="{% static 'csv/income_example.csv' %}">here</a>.</p>
+                      <form action="{% url 'income_import_from_csv' %}" method="POST" enctype="multipart/form-data" class="form-horizontal">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-9">
+                              <input type="file" class="form-control" name="income_csv_file" id="income_csv_file" required="True" accept=".csv" class="form-control">
+                            </div>
+                            <div class="col-md-3">
+                              <button class="btn btn-default">Upload CSV</button>
+                            </div>
+                        </div>
+                      </form>
                   {% endif %}
                 </div>
               </div>

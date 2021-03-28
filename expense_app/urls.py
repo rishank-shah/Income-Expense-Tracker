@@ -16,5 +16,5 @@ urlpatterns = [
     path('download-csv/<str:filter_by>',views.download_as_csv,name = 'download_as_csv'),
     path('search',views.search_expense,name="expense_search"),
     path('import/',views.import_expense,name="import_expense"),
-    path('import-from-csv',views.upload_csv,name="expense_import_from_csv")
+    path('expense-import-from-csv',views.upload_csv,name="expense_import_from_csv")
 ]

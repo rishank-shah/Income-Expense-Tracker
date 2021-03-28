@@ -22,7 +22,7 @@ def queryset_filter(user,filter_by):
         
     return expenses
 
-def send_success_mail(request,filename,number_of_expenses):		
+def expense_send_success_mail(request,filename,number_of_expenses):		
     domain = get_current_site(request).domain
     email_subject = 'Expenses Loaded From Csv File'
     email_body = f'Hi {request.user.username}. Expenses from your csv file {filename} are successfully loaded. Total Number of expenses loaded are {number_of_expenses} \n'
@@ -35,7 +35,7 @@ def send_success_mail(request,filename,number_of_expenses):
     )
     EmailThread(email).start()
 
-def send_error_mail(request,filename):		
+def expense_send_error_mail(request,filename):		
     domain = get_current_site(request).domain
     email_subject = 'Expenses cannot be Loaded From Csv File'
     email_body = f'Hi {request.user.username}. Expenses from your csv file {filename} are not loaded. Please check if the format of the csv file was as mentioned. \n'

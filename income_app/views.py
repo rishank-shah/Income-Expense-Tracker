@@ -13,6 +13,9 @@ from .utils import queryset_filter
 import csv
 from django.db.models import Q
 import json
+import pandas as pd
+import datetime
+from .utils import income_send_success_mail,income_send_error_mail
 
 @login_required(login_url='login')
 def income_page(request):
@@ -95,24 +98,24 @@ def add_income_source(request):
     }
 
     if request.method == 'GET': 
-        return render(request,'income_app/add_income_source.html',context)
+        return render(request,'income_app/income_source_import.html',context)
     
     if request.method == 'POST':
         source = request.POST.get('source','')
         
         if source == '':
             messages.error(request,'IncomeSource cannot be empty')
-            return render(request,'income_app/add_income_source.html',context)
+            return render(request,'income_app/income_source_import.html',context)
         
         source = source.lower().capitalize()
         if IncomeSource.objects.filter(user=request.user,source = source).exists():
             messages.error(request,f'Income Source ({source}) already exists.')
-            return render(request,'income_app/add_income_source.html',context)
+            return render(request,'income_app/income_source_import.html',context)
         
         IncomeSource.objects.create(user=request.user,source = source).save()
         
         messages.success(request,'IncomeSource added')
-        return render(request,'income_app/add_income_source.html',{
+        return render(request,'income_app/income_source_import.html',{
             'sources' : sources,
             'create':True
         })
@@ -128,7 +131,7 @@ def edit_income_source(request,id):
     }
 
     if request.method == 'GET': 
-        return render(request,'income_app/add_income_source.html',context)
+        return render(request,'income_app/income_source_import.html',context)
     
     if request.method == 'POST':
         source = request.POST.get('source','')
@@ -141,12 +144,12 @@ def edit_income_source(request,id):
 
         if source == '':
             messages.error(request,'IncomeSource cannot be empty')
-            return render(request,'income_app/add_income_source.html',context)
+            return render(request,'income_app/income_source_import.html',context)
         
         source = source.lower().capitalize()
         if IncomeSource.objects.filter(user=request.user,source = source).exists():
             messages.error(request,f'Income Source ({source}) already exists.')
-            return render(request,'income_app/add_income_source.html',context)
+            return render(request,'income_app/income_source_import.html',context)
         
         source_obj.source = source
         source_obj.save()
@@ -309,3 +312,79 @@ def search_income(request):
             list(filtered_results)
             ,safe=False
         )
+
+@login_required(login_url='login')
+def import_income(request):
+    return render(request,'income_app/income_source_import.html',{
+        'upload':True
+    })
+
+@login_required(login_url='login')
+def upload_csv(request):
+
+    if request.method == 'POST':
+        try:
+            csv_file = request.FILES.get('income_csv_file')
+
+            if csv_file == None:
+                messages.error(request,'CSV file required')
+                return redirect('import_income')
+
+            if not csv_file.name.endswith('.csv'):
+                messages.error(request,'Please Upload a CSV file.')
+                return redirect('import_income')
+
+            csv = pd.read_csv(csv_file)
+            csv.columns = [c.lower() for c in csv.columns]
+
+            if IncomeSource.objects.filter(user = request.user, source='Loaded From Csv'):
+                csv_income_source = IncomeSource.objects.get(user = request.user, source='Loaded From Csv')
+            else:
+                csv_income_source = IncomeSource.objects.create(user = request.user, source='Loaded From Csv')
+                csv_income_source.save()
+
+            income_count = 0
+            for i,row in csv.iterrows():
+                if not pd.isna(row['date']):
+                    date = row['date'].split('-')
+                    try:
+                        date = datetime.date(2000 + int(date[2]) ,int(date[1]),int(date[0]))
+                    except:
+                        date = datetime.date.today()
+                else:
+                    date = datetime.date.today()
+
+                if not pd.isna(row['source']):
+                    source = row['source'].lower().capitalize()
+                    if IncomeSource.objects.filter(user = request.user, source = source).exists():
+                        source = IncomeSource.objects.get(user = request.user, source = source)
+                    else:
+                        source = IncomeSource.objects.create(user = request.user, source = source)
+                        source.save()
+                else:
+                    source = csv_income_source
+                
+                if not pd.isna(row['description']):
+                    description = row['description']
+                else:
+                    description = 'Loaded From Csv'
+                
+                if not pd.isna(float(row['amount'])):
+                    Income.objects.create(
+                        user = request.user,
+                        amount = float(row['amount']),
+                        date = date,
+                        description = description,
+                        source = source
+                    ).save()
+                    income_count += 1
+            
+            income_send_success_mail(request,csv_file.name,income_count)
+            messages.success(request,'Incomes will be saved from csv file in a few seconds.')
+            return redirect('income')
+        
+        except Exception as e:
+            income_send_error_mail(request,csv_file.name)
+            messages.error(request,'Please Check if the format of csv file is correct.')
+            print(repr(e))
+            return redirect('import_income')
