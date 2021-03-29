@@ -10,7 +10,8 @@
 * Users can export their expenses and incomes in an excel and csv. (filters are present to download data by year, week, month and today)
 * Visualize data by a graph. Graphs are using filtering to show data of month, year, week and today.
 * Users can change graph options. (eg: piechart, bargraph, linegraph, etc)
-* Users can download the complete spreadsheet of their account in an excel, csv and pdf.
+* Users can export their expenses and incomes in an excel, csv and pdf.
+* Users can import incomes and expenses from a csv.
 * Users can also search expenses and incomes present in their account
 
 ### Requirements for running project 

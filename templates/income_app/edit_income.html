@@ -15,29 +15,19 @@
                   <h5 class="h3 mb-0 text-center">Edit Income</h5>
                   <form action="{% url 'edit_income' income.id %}" method="POST">
                     {% csrf_token %}
-                    <div class="form-group">
-                        <label for="">Amount</label>
-                        <input class="form-control form-control-sm" type = "number" name="amount" value = "{{ values.amount }}" >
-                    </div>
-                    <div class="form-group">
-                        <label for="">Description</label>
-                        <input class="form-control form-control-sm" type = "text" name="description" value = "{{ values.description }}">
-                    </div>
+                    <div class="form-group"><label for="">Amount</label><input class="form-control form-control-sm" type = "number" name="amount" value = "{{ values.amount }}" ></div>
+                    <div class="form-group"><label for="">Description</label><input class="form-control form-control-sm" type = "text" name="description" value = "{{ values.description }}"></div>
                     <div class="form-group">
                         <label for="">Source</label>
                         <select class="form-control form-control-sm" name="source">
+                            <option selected name="source" value="{{values.source.source}}">{{values.source.source}}</option>
                             {% for source in sources %}
                                 <option name = "source" value="{{source.source}}">{{source.source}}</option>
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label for="">Date of Income</label>
-                        <input class="form-control form-control-sm" value="{{values.date |date:'Y-m-d' }}" type = "date" name="income_date">
-                    </div>
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary">Update Income</button>
-                    </div>
+                    <div class="form-group"><label for="">Date of Income</label><input class="form-control form-control-sm" value="{{values.date |date:'Y-m-d' }}" type = "date" name="income_date"></div>
+                    <div class="text-center"><button type="submit" class="btn btn-primary">Update Income</button></div>
                 </form>
                 </div>
               </div>

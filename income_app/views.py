@@ -177,7 +177,6 @@ def delete_income_source(request,id):
 
 @login_required(login_url='login')
 def edit_income(request,id):
-    sources = IncomeSource.objects.filter(user=request.user)
     
     if Income.objects.filter(id=id,user=request.user).exists():
         income = Income.objects.get(id=id,user=request.user)
@@ -186,6 +185,8 @@ def edit_income(request,id):
         messages.error(request,'Something went Wrong. Please Try Again')
         return redirect('income')
     
+    sources = IncomeSource.objects.filter(user=request.user).exclude(id=income.source.id)
+
     context = {
         'income':income,
         'values': income,
@@ -333,8 +334,17 @@ def upload_csv(request):
             if not csv_file.name.endswith('.csv'):
                 messages.error(request,'Please Upload a CSV file.')
                 return redirect('import_income')
+            
+            if csv_file.multiple_chunks():
+                messages.error(request,"Uploaded file is too big (%.2f MB)." % (csv_file.size/(1000*1000),))
+                return redirect('import_income')
 
             csv = pd.read_csv(csv_file)
+
+            if csv.shape[0] > 10:
+                messages.error(request,'Please upload a CSV file with less than 10 rows.')
+                return redirect('import_income')
+
             csv.columns = [c.lower() for c in csv.columns]
 
             if IncomeSource.objects.filter(user = request.user, source='Loaded From Csv'):
@@ -385,6 +395,7 @@ def upload_csv(request):
         
         except Exception as e:
             income_send_error_mail(request,csv_file.name)
-            messages.error(request,'Please Check if the format of csv file is correct.')
             print(repr(e))
+
+            messages.error(request,'Please Check if the format of csv file is correct.')
             return redirect('import_income')

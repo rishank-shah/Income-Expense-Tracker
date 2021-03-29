@@ -6,7 +6,9 @@ from django.contrib import auth
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from .utils import email_register,account_activation_token
+
 class Registration(View):
+
     def get(self,request):
         return render(request,'auth_app/register.html')
 
@@ -54,8 +56,10 @@ class Registration(View):
             return render(request,'auth_app/register.html',context=context)
 
 class Login(View):
+
     def get(self,request):
         return render(request,'auth_app/login.html')
+
     def post(self,request):
         username = request.POST.get('username','')
         password = request.POST.get('password','')
@@ -66,10 +70,12 @@ class Login(View):
 
         if username == '':
             messages.error(request,"Please Enter username")
-            return render(request,'auth_app/login.html',)
+            return render(request,'auth_app/login.html',context=context)
+
         if password == '':
             messages.error(request,"Please Enter Password")
             return render(request,'auth_app/login.html',context=context)
+
         if username and password:
             user = auth.authenticate(username=username,password=password)
 
@@ -83,10 +89,10 @@ class Login(View):
                     return redirect('dashboard')
             else:
                 messages.error(request,'Invalid credentials')
-                return render(request,'auth_app/login.html')
+                return render(request,'auth_app/login.html',context=context)
         else:
             messages.error(request,'Something went wrong.')
-            return render(request,'authentication/login.html')
+            return render(request,'authentication/login.html',context=context)
 
 
 
@@ -100,12 +106,15 @@ class Logout(View):
 class Verification(View):
 
 	def get(self,request,uidb64,token):
+        
 		try:
 			id = force_text(urlsafe_base64_decode(uidb64))
 			user = User.objects.get(pk=id)
+
 			if not account_activation_token.check_token(user,token):
 				messages.error(request,'Already Activated')
 				return redirect('login')
+
 			if user.is_active:
 				return redirect('login')
 			user.is_active = True
