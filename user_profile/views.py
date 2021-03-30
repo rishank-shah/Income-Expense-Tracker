@@ -24,7 +24,8 @@ def profile(request,new_context={}):
                 'profile_pic':user_profile_obj.profile_pic,
                 'currency_data':currency_data,
                 'selected_currency':user_profile_obj.currency,
-                'form':form
+                'form':form,
+                'user_profile':user_profile_obj
             }
             context.update(new_context)
             return render(request,'user_app/profile.html',context)
@@ -106,3 +107,17 @@ def change_password(request):
             request.method = 'GET'
             response = profile(request,{'forms_errors':list(form.errors.values())})
             return response
+
+@login_required(login_url = 'login')
+def change_email_pref(request):
+    user = User.objects.get(username = request.user.username)
+    user_profile = UserProfile.objects.get(user=user)
+    
+    if request.method == 'POST':
+        user_profile.email_preference = not user_profile.email_preference
+        user_profile.save()
+        
+        messages.success(request,"Email Preference Changed saved")
+        return redirect('user_profile')
+    else:
+        return redirect('user_profile')

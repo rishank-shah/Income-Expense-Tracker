@@ -6,6 +6,7 @@ from django.contrib import auth
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from .utils import email_register,account_activation_token
+from user_profile.models import UserProfile
 
 class Registration(View):
 
@@ -45,6 +46,7 @@ class Registration(View):
                 user.set_password(password)
                 user.is_active = False
                 user.save()
+                UserProfile.objects.create(user=user).save()
                 email_register(request,user,email)
                 messages.success(request,'Account Created Succesfully. Please Confirm Email')
                 return redirect('login')

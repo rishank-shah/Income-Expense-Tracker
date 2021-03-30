@@ -30,6 +30,13 @@
                   </div>
                 </div>
               </form>
+              <hr/>
+              <div class="mt-5">
+                <form method="POST" action="{% url 'change_email_pref' %}">
+                  {% csrf_token %}
+                  <div class="row mt-2 mb-3"><div class="col-md-5"><h6 class="heading-small text-muted ">Email Notifications</h6></div><div class="col-md-4"></div><div class="col-md-3">{% if user_profile.email_preference %}<button type="submit" class="text-right btn btn-sm btn-primary">Turn Off</button>{% else %}<button type="submit" class="text-right btn btn-sm btn-primary">Turn On</button>{% endif %}</div></div>
+                </form>
+              </div>
               <hr class="my-4 mt-2 mb-2" />
               <div class="mt-5">
                 <form method="POST" action="{% url 'change_currency' %}">

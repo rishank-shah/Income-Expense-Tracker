@@ -4,6 +4,7 @@ from datetime import timedelta
 from auth_app.utils import EmailThread
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
+from user_profile.models import UserProfile
 
 def queryset_filter(user,filter_by):
     today_date_time = timezone.localtime()
@@ -22,28 +23,30 @@ def queryset_filter(user,filter_by):
         
     return expenses
 
-def expense_send_success_mail(request,filename,number_of_expenses):		
-    domain = get_current_site(request).domain
-    email_subject = 'Expenses Loaded From Csv File'
-    email_body = f'Hi {request.user.username}. Expenses from your csv file {filename} are successfully loaded. Total Number of expenses loaded are {number_of_expenses} \n'
-    fromEmail = 'noreply@income-expense.com'
-    email = EmailMessage(
-        email_subject,
-        email_body,
-        fromEmail,
-        [request.user.email],
-    )
-    EmailThread(email).start()
+def expense_send_success_mail(request,filename,number_of_expenses,type):
+    if UserProfile.objects.get(user=request.user).email_preference:
+        domain = get_current_site(request).domain
+        email_subject = f'Expenses Loaded From {type} File'
+        email_body = f'Hi {request.user.username}. Expenses from your {type} file {filename} are successfully loaded. Total Number of expenses loaded are {number_of_expenses} \n'
+        fromEmail = 'noreply@income-expense.com'
+        email = EmailMessage(
+            email_subject,
+            email_body,
+            fromEmail,
+            [request.user.email],
+        )
+        EmailThread(email).start()
 
-def expense_send_error_mail(request,filename):		
-    domain = get_current_site(request).domain
-    email_subject = 'Expenses cannot be Loaded From Csv File'
-    email_body = f'Hi {request.user.username}. Expenses from your csv file {filename} are not loaded. Please check if the format of the csv file was as mentioned. \n'
-    fromEmail = 'noreply@income-expense.com'
-    email = EmailMessage(
-        email_subject,
-        email_body,
-        fromEmail,
-        [request.user.email],
-    )
-    EmailThread(email).start()
+def expense_send_error_mail(request,filename,type):	
+    if UserProfile.objects.get(user=request.user).email_preference:	
+        domain = get_current_site(request).domain
+        email_subject = f'Expenses cannot be Loaded From {type} File'
+        email_body = f'Hi {request.user.username}. Expenses from your {type} file {filename} are not loaded. Please check if the format of the {type} file was as mentioned. \n'
+        fromEmail = 'noreply@income-expense.com'
+        email = EmailMessage(
+            email_subject,
+            email_body,
+            fromEmail,
+            [request.user.email],
+        )
+        EmailThread(email).start()
