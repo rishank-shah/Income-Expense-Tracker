@@ -6,13 +6,11 @@ from django.utils.timezone import localtime
 from user_profile.models import UserProfile
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.db.models import Sum
 import xlwt
 from .utils import queryset_filter
 import csv
-from django.db.models import Q
-import json
 import pandas as pd
 import datetime
 from .utils import expense_send_success_mail,expense_send_error_mail
@@ -20,7 +18,7 @@ from .utils import expense_send_success_mail,expense_send_error_mail
 @login_required(login_url='login')
 def expense_page(request):
     expenses =  Expense.objects.filter(user=request.user).order_by('-date')
-    paginator = Paginator(expenses,4)
+    paginator = Paginator(expenses,5)
     page_number = request.GET.get('page')
     page_expenses = Paginator.get_page(paginator,page_number)
 
@@ -296,25 +294,6 @@ def download_as_csv(request,filter_by):
     return response
 
 @login_required(login_url='login')
-def search_expense(request):
-    if request.method == 'POST':
-        query = json.loads(request.body).get('search_query','')
-
-        if query == '':
-            return JsonResponse({
-                'error':'Not Found'
-            })
-
-        user_expenses = Expense.objects.filter(user = request.user)
-        expenses = user_expenses.filter(Q(amount__istartswith = query) | Q(date__istartswith = query)| Q(description__icontains = query) | Q(category__name__icontains = query))
-        filtered_results = expenses.values('id','amount','description','category__name','date')
-		
-        return JsonResponse(
-            list(filtered_results)
-            ,safe=False
-        )
-
-@login_required(login_url='login')
 def import_expense(request):
     return render(request,'expense_app/expense_category_import.html',{
         'upload':True
@@ -365,7 +344,7 @@ def upload_csv(request):
                     date = datetime.date.today()
 
                 if not pd.isna(row['category']):
-                    name = row['category'].lower().capitalize()
+                    name = row['category'].strip().lower().capitalize()
                     if ExpenseCategory.objects.filter(user = request.user, name = name).exists():
                         category = ExpenseCategory.objects.get(user = request.user, name = name)
                     else:
@@ -375,11 +354,11 @@ def upload_csv(request):
                     category = csv_expense_category
                 
                 if not pd.isna(row['description']):
-                    description = row['description']
+                    description = row['description'].strip()
                 else:
                     description = 'Loaded From Csv'
                 
-                if not pd.isna(float(row['amount'])):
+                if not pd.isna(row['amount']):
                     Expense.objects.create(
                         user = request.user,
                         amount = float(row['amount']),
@@ -389,13 +368,17 @@ def upload_csv(request):
                     ).save()
                     expense_count += 1
             
-            expense_send_success_mail(request,csv_file.name,expense_count)
-            messages.success(request,'Expenses will be saved from csv file in a few seconds.')
+            expense_send_success_mail(request,csv_file.name,expense_count,'CSV')
+            messages.success(request,'Expenses are saved from csv file.')
             return redirect('expense')
         
         except Exception as e:
-            expense_send_error_mail(request,csv_file.name)
+            expense_send_error_mail(request,csv_file.name,'CSV')
             print(repr(e))
 
             messages.error(request,'Please Check if the format of csv file is correct.')
             return redirect('import_expense')
+
+@login_required(login_url='login')
+def upload_excel(request):
+    pass

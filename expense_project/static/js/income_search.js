@@ -34,8 +34,8 @@ searchField.addEventListener("keyup", (e) => {
             tbody.innerHTML += `
                 <tr>
                 <td>${item.amount}</td>
-                <td>${item.source__source}</td>
-                <td>${item.description}</td>
+                <td>${item.source__source.length > 20 ? item.source__source.substring(0,19) + '...' : item.source__source }</td>
+                <td>${item.description.length > 30 ? item.description.substring(0,29) + '...' : item.description}</td>
                 <td>${item.date}</td>
                 <td><a href="/income/edit-income/${item.id}" class="btn btn-warning btn-sm">Edit</a></td>
                 </tr>`;

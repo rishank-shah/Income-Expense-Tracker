@@ -20,7 +20,7 @@
                     <div class="app-table mt-5">
                       <table id="table-complete" class="table text-white">
                         <thead><tr><th style="font-size: small;">Amount ({{currency}})</th><th style="font-size: small;">Source</th><th style="font-size: small;">Description</th><th style="font-size: small;">Date</th><th style="font-size: small;">Action</th></tr></thead>
-                        <tbody id="table-body-data">{% for income in page_incomes %}<tr><td>{{income.amount}}</td><td>{{income.source.source}}</td><td>{{income.description}}</td><td>{{income.date}}</td><td><a href="{% url 'edit_income' income.id %}" class="btn btn-warning btn-sm">Edit</a></td></tr>{% endfor %}</tbody>
+                        <tbody id="table-body-data">{% for income in page_incomes %}<tr><td>{{income.amount}}</td><td>{{income.source.source | truncatechars:20 }}</td><td>{{income.description | truncatechars:30 }}</td><td>{{income.date}}</td><td><a href="{% url 'edit_income' income.id %}" class="btn btn-warning btn-sm">Edit</a></td></tr>{% endfor %}</tbody>
                       </table>
                     </div>
                   {% else %}<h5 class="h3 text-white mb-0 text-center">No incomes. Create <a href="{% url 'add_income' %}">one</a></h5>{% endif %}

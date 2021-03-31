@@ -3,6 +3,8 @@ import datetime
 from django.http import JsonResponse
 from datetime import timedelta
 from .models import IncomeSource,Income
+import json
+from django.db.models import Q
 
 @login_required(login_url='login')
 def income_summary(request):
@@ -58,3 +60,29 @@ def income_summary(request):
         'income_source_data':final_rep,
         'label_title':title
     },safe=False)
+
+@login_required(login_url='login')
+def search_income(request):
+    if request.method == 'POST':
+        query = json.loads(request.body).get('search_query','')
+
+        if query == '':
+            return JsonResponse({
+                'error':'Not Found'
+            })
+        
+        user_incomes = Income.objects.filter(user = request.user)
+
+        incomes = user_incomes.filter(
+            Q(amount__istartswith = query) | 
+            Q(date__istartswith = query) | 
+            Q(description__icontains = query) | 
+            Q(source__source__icontains = query)
+        )
+        
+        filtered_results = incomes.values('id','amount','description','source__source','date')
+		
+        return JsonResponse(
+            list(filtered_results)
+            ,safe=False
+        )

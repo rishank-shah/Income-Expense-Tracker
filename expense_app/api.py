@@ -3,6 +3,8 @@ import datetime
 from datetime import timedelta
 from django.http import JsonResponse
 from .models import Expense, ExpenseCategory
+import json
+from django.db.models import Q
 
 @login_required(login_url='login')
 def expense_summary(request):
@@ -58,3 +60,29 @@ def expense_summary(request):
         'expense_category_data':final_rep,
         'label_title':title
     },safe=False)
+
+@login_required(login_url='login')
+def search_expense(request):
+    if request.method == 'POST':
+        query = json.loads(request.body).get('search_query','')
+
+        if query == '':
+            return JsonResponse({
+                'error':'Not Found'
+            })
+
+        user_expenses = Expense.objects.filter(user = request.user)
+        
+        expenses = user_expenses.filter(
+            Q(amount__istartswith = query) | 
+            Q(date__istartswith = query) | 
+            Q(description__icontains = query) | 
+            Q(category__name__icontains = query)
+        )
+
+        filtered_results = expenses.values('id','amount','description','category__name','date')
+		
+        return JsonResponse(
+            list(filtered_results)
+            ,safe=False
+        )

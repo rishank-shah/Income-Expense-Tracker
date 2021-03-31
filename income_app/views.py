@@ -6,13 +6,11 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from user_profile.models import UserProfile
 from django.utils.timezone import localtime
-from django.http import HttpResponse,JsonResponse
+from django.http import HttpResponse
 from django.db.models import Sum
 import xlwt
 from .utils import queryset_filter
 import csv
-from django.db.models import Q
-import json
 import pandas as pd
 import datetime
 from .utils import income_send_success_mail,income_send_error_mail
@@ -20,7 +18,7 @@ from .utils import income_send_success_mail,income_send_error_mail
 @login_required(login_url='login')
 def income_page(request):
     incomes =  Income.objects.filter(user=request.user).order_by('-date')
-    paginator = Paginator(incomes,4)
+    paginator = Paginator(incomes,5)
     page_number = request.GET.get('page')
     page_incomes = Paginator.get_page(paginator,page_number)
 
@@ -296,25 +294,6 @@ def download_as_csv(request,filter_by):
     return response
 
 @login_required(login_url='login')
-def search_income(request):
-    if request.method == 'POST':
-        query = json.loads(request.body).get('search_query','')
-
-        if query == '':
-            return JsonResponse({
-                'error':'Not Found'
-            })
-        
-        user_incomes = Income.objects.filter(user = request.user)
-        incomes = user_incomes.filter(Q(amount__istartswith = query) | Q(date__istartswith = query)| Q(description__icontains = query) | Q(source__source__icontains = query))
-        filtered_results = incomes.values('id','amount','description','source__source','date')
-		
-        return JsonResponse(
-            list(filtered_results)
-            ,safe=False
-        )
-
-@login_required(login_url='login')
 def import_income(request):
     return render(request,'income_app/income_source_import.html',{
         'upload':True
@@ -365,7 +344,7 @@ def upload_csv(request):
                     date = datetime.date.today()
 
                 if not pd.isna(row['source']):
-                    source = row['source'].lower().capitalize()
+                    source = row['source'].strip().lower().capitalize()
                     if IncomeSource.objects.filter(user = request.user, source = source).exists():
                         source = IncomeSource.objects.get(user = request.user, source = source)
                     else:
@@ -375,11 +354,11 @@ def upload_csv(request):
                     source = csv_income_source
                 
                 if not pd.isna(row['description']):
-                    description = row['description']
+                    description = row['description'].strip()
                 else:
                     description = 'Loaded From Csv'
                 
-                if not pd.isna(float(row['amount'])):
+                if not pd.isna(row['amount']):
                     Income.objects.create(
                         user = request.user,
                         amount = float(row['amount']),
@@ -389,13 +368,17 @@ def upload_csv(request):
                     ).save()
                     income_count += 1
             
-            income_send_success_mail(request,csv_file.name,income_count)
-            messages.success(request,'Incomes will be saved from csv file in a few seconds.')
+            income_send_success_mail(request,csv_file.name,income_count,'CSV')
+            messages.success(request,'Incomes are saved from csv file.')
             return redirect('income')
         
         except Exception as e:
-            income_send_error_mail(request,csv_file.name)
+            income_send_error_mail(request,csv_file.name,'CSV')
             print(repr(e))
 
             messages.error(request,'Please Check if the format of csv file is correct.')
             return redirect('import_income')
+
+@login_required(login_url='login')
+def upload_excel(request):
+    pass

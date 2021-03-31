@@ -20,7 +20,7 @@
                     <div class="app-table mt-5">
                       <table id="table-complete" class="table text-white">
                         <thead><tr><th style="font-size: small;">Amount ({{currency}})</th><th style="font-size: small;">Category</th><th style="font-size: small;">Description</th><th style="font-size: small;">Date</th><th style="font-size: small;">Action</th></tr></thead>
-                        <tbody id="table-body-data" >{% for expense in page_expenses %}<tr><td>{{expense.amount}}</td><td>{{expense.category.name}}</td><td>{{expense.description}}</td><td>{{expense.date}}</td><td><a href="{% url 'edit_expense' expense.id %}" class="btn btn-warning btn-sm">Edit</a></td></tr>{% endfor %}</tbody>
+                        <tbody id="table-body-data" >{% for expense in page_expenses %}<tr><td>{{expense.amount}}</td><td>{{expense.category.name | truncatechars:20 }}</td><td>{{expense.description | truncatechars:30 }}</td><td>{{expense.date}}</td><td><a href="{% url 'edit_expense' expense.id %}" class="btn btn-warning btn-sm">Edit</a></td></tr>{% endfor %}</tbody>
                       </table>
                     </div>
                   {% else %}<h5 class="h3 text-white mb-0 text-center">No expenses. Create <a href="{% url 'add_expense' %}">one</a></h5>{% endif %}
