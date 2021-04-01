@@ -14,6 +14,8 @@ import csv
 import pandas as pd
 import datetime
 from .utils import expense_send_success_mail,expense_send_error_mail
+from pyexcel_xls import get_data as xls_get
+from pyexcel_xlsx import get_data as xlsx_get
 
 @login_required(login_url='login')
 def expense_page(request):
@@ -381,4 +383,108 @@ def upload_csv(request):
 
 @login_required(login_url='login')
 def upload_excel(request):
-    pass
+
+    if request.method == 'POST':
+        try:
+            excel_file = request.FILES.get('expense_excel_file')
+            
+            if excel_file == None:
+                messages.error(request,'Excel file required')
+                return redirect('import_expense')
+                
+            if not (excel_file.name.endswith('.xls') or excel_file.name.endswith('.xlsx')):
+                messages.error(request,'Please Upload a Excel file.')
+                return redirect('import_expense')
+
+            if excel_file.multiple_chunks():
+                messages.error(request,"Uploaded file is too big (%.2f MB)." % (excel_file.size/(1000*1000),))
+                return redirect('import_expense')
+            
+            if excel_file.name.endswith('.xls'):
+                data = xls_get(excel_file, column_limit=4)
+            elif excel_file.name.endswith('.xlsx'):
+                data = xlsx_get(excel_file, column_limit=4)
+            else:
+                messages.error(request,'Please Upload a Excel file.')
+                return redirect('import_expense')
+            
+            keys_excel = list(data.keys())
+
+            expense_excel_data = data[keys_excel[0]]
+
+            try:
+                expense_excel_data.remove([])
+            except:
+                pass
+
+            if len(expense_excel_data) > 11:
+                messages.error(request,'Please upload a excel file with less than 10 rows.')
+                return redirect('import_expense')
+
+            if ExpenseCategory.objects.filter(user = request.user, name='Loaded From Excel'):
+                excel_expense_category = ExpenseCategory.objects.get(user = request.user, name='Loaded From Excel')
+            else:
+                excel_expense_category = ExpenseCategory.objects.create(user = request.user, name='Loaded From Excel')
+                excel_expense_category.save()
+
+            headers = expense_excel_data.pop(0)
+            headers = [c.lower() for c in headers] 
+
+            if headers != ['date', 'category', 'description', 'amount']:
+                expense_send_error_mail(request,excel_file.name,'Excel')
+                messages.error(request,'Please Check if the format of excel file is correct.')
+                return redirect('import_expense')
+
+            expense_count = 0
+            for row in expense_excel_data:
+
+                if(len(row) != 4):
+                    break
+
+                if not row[0] == '':
+                    if isinstance(row[0],datetime.date):
+                        date = row[0]
+                    else:
+                        date = row['date'].split('-')
+                        try:
+                            date = datetime.date(2000 + int(date[2]) ,int(date[1]),int(date[0]))
+                        except:
+                            date = datetime.date.today()
+                else:
+                    date = datetime.date.today()
+
+                if not row[1] == '':
+                    name = row[1].strip().lower().capitalize()
+                    if ExpenseCategory.objects.filter(user = request.user, name = name).exists():
+                        category = ExpenseCategory.objects.get(user = request.user, name = name)
+                    else:
+                        category = ExpenseCategory.objects.create(user = request.user, name = name)
+                        category.save()
+                else:
+                    category = excel_expense_category
+                
+                if not row[2] == '':
+                    description = row[2].strip()
+                else:
+                    description = 'Loaded From Excel'
+                
+                if not row[3] == '':
+                    Expense.objects.create(
+                        user = request.user,
+                        amount = float(row[3]),
+                        date = date,
+                        description = description,
+                        category = category
+                    ).save()
+                    expense_count += 1
+            
+            expense_send_success_mail(request,excel_file.name,expense_count,'Excel')
+            messages.success(request,'Expenses are saved from excel file.')
+            return redirect('expense')
+        
+        except Exception as e:
+            expense_send_error_mail(request,excel_file.name,'Excel')
+            print(repr(e))
+
+            messages.error(request,'Please Check if the format of excel file is correct.')
+            return redirect('import_expense')

@@ -6,13 +6,13 @@
 - [Steps for running project](#steps-for-running-project)
 
 ### Main Features
-* Add Expenses and Incomes by different catgeory and source.
-* Users can export their expenses and incomes in an excel and csv. (filters are present to download data by year, week, month and today)
-* Visualize data by a graph. Graphs are using filtering to show data of month, year, week and today.
-* Users can change graph options. (eg: piechart, bargraph, linegraph, etc)
-* Users can export their expenses and incomes in an excel, csv and pdf.
-* Users can import incomes and expenses from a csv.
-* Users can also search expenses and incomes present in their account
+- [x] Add Expenses and Incomes by different catgeory and source.
+- [x] Users can export their expenses and incomes in an excel and csv. (filters are present to download data by year, week, month and today)
+- [x] Visualize data by a graph. Graphs are using filtering to show data of month, year, week and today.
+- [x] Users can change graph options. (eg: piechart, bargraph, linegraph, etc)
+- [x] Users can export their expenses and incomes in an excel, csv and pdf.
+- [x] Users can import incomes and expenses from a csv and excel.
+- [x] Users can also search expenses and incomes present in their account
 
 ### Requirements for running project 
 - [python > 3.5.x](https://www.python.org/downloads/)

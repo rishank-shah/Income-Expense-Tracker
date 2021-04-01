@@ -14,6 +14,8 @@ import csv
 import pandas as pd
 import datetime
 from .utils import income_send_success_mail,income_send_error_mail
+from pyexcel_xls import get_data as xls_get
+from pyexcel_xlsx import get_data as xlsx_get
 
 @login_required(login_url='login')
 def income_page(request):
@@ -381,4 +383,110 @@ def upload_csv(request):
 
 @login_required(login_url='login')
 def upload_excel(request):
-    pass
+
+    if request.method == 'POST':
+        try:
+            excel_file = request.FILES.get('income_excel_file')
+            
+            if excel_file == None:
+                messages.error(request,'Excel file required')
+                return redirect('import_income')
+                
+            if not (excel_file.name.endswith('.xls') or excel_file.name.endswith('.xlsx')):
+                messages.error(request,'Please Upload a Excel file.')
+                return redirect('import_income')
+
+            if excel_file.multiple_chunks():
+                messages.error(request,"Uploaded file is too big (%.2f MB)." % (excel_file.size/(1000*1000),))
+                return redirect('import_income')
+            
+            if excel_file.name.endswith('.xls'):
+                data = xls_get(excel_file, column_limit=4)
+            elif excel_file.name.endswith('.xlsx'):
+                data = xlsx_get(excel_file, column_limit=4)
+            else:
+                messages.error(request,'Please Upload a Excel file.')
+                return redirect('import_income')
+            
+            keys_excel = list(data.keys())
+
+            income_excel_data = data[keys_excel[0]]
+
+            try:
+                income_excel_data.remove([])
+            except:
+                pass
+
+
+
+            if len(income_excel_data) > 11:
+                messages.error(request,'Please upload a excel file with less than 10 rows.')
+                return redirect('import_income')
+
+            if IncomeSource.objects.filter(user = request.user, source='Loaded From Excel'):
+                excel_income_source = IncomeSource.objects.get(user = request.user, source='Loaded From Excel')
+            else:
+                excel_income_source = IncomeSource.objects.create(user = request.user, source='Loaded From Excel')
+                excel_income_source.save()
+
+            headers = income_excel_data.pop(0)
+            headers = [c.lower() for c in headers] 
+
+            if headers != ['date', 'source', 'description', 'amount']:
+                income_send_error_mail(request,excel_file.name,'Excel')
+                messages.error(request,'Please Check if the format of excel file is correct.')
+                return redirect('import_income')
+
+            income_count = 0
+            for row in income_excel_data:
+
+                if(len(row) != 4):
+                    break
+
+                if not row[0] == '':
+                    if isinstance(row[0],datetime.date):
+                        date = row[0]
+                    else:
+                        date = row['date'].split('-')
+                        try:
+                            date = datetime.date(2000 + int(date[2]) ,int(date[1]),int(date[0]))
+                        except:
+                            date = datetime.date.today()
+                else:
+                    date = datetime.date.today()
+
+                if not row[1] == '':
+                    source = row[1].strip().lower().capitalize()
+                    if IncomeSource.objects.filter(user = request.user, source = source).exists():
+                        income_source = IncomeSource.objects.get(user = request.user, source = source)
+                    else:
+                        income_source = IncomeSource.objects.create(user = request.user, source = source)
+                        income_source.save()
+                else:
+                    income_source = excel_income_source
+                
+                if not row[2] == '':
+                    description = row[2].strip()
+                else:
+                    description = 'Loaded From Excel'
+                
+                if not row[3] == '':
+                    Income.objects.create(
+                        user = request.user,
+                        amount = float(row[3]),
+                        date = date,
+                        description = description,
+                        source = income_source
+                    ).save()
+                    income_count += 1
+            
+            income_send_success_mail(request,excel_file.name,income_count,'Excel')
+            messages.success(request,'Incomes are saved from excel file.')
+            return redirect('income')
+        
+        except Exception as e:
+            income_send_error_mail(request,excel_file.name,'Excel')
+            print(repr(e))
+
+            messages.error(request,'Please Check if the format of excel file is correct.')
+            return redirect('import_income')

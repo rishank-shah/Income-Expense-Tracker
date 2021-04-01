@@ -30,17 +30,28 @@
             </div>
           </div>
           <div class="pagination-container">
-              <span class="text-white">Showing page {{page_incomes.number}} of {{ page_incomes.paginator.num_pages }}</span>
-            <ul class="pagination align-right float-right mr-auto">
-              {% if page_incomes.has_previous %}
-                <li {% if page_incomes.number == 1 %} class="page-item active" {% endif %}><a class="page-link" href="?page=1">&laquo; 1</a></li>
-                <li class="page-item"> <a class="page-link" href="?page={{ page_incomes.previous_page_number }}">Back</a></li>
-              {% endif %}
-              {% if page_incomes.has_next %}
-                <li class="page-item"> <a class="page-link" href="?page={{ page_incomes.next_page_number }}">Next</a></li>
-                <li class="page-item"> <a class="page-link" href="?page={{ page_incomes.paginator.num_pages }}">{{ page_incomes.paginator.num_pages}} &raquo;</a></li>
-              {% endif %}
-              </ul>
+            <div class="row">
+              <div class="col-md-6"><p></p><span class="text-white">Showing page {{page_incomes.number}} of {{ page_incomes.paginator.num_pages }}</span></div>
+              <div class="col-md-6">
+                <ul class="pagination align-right float-right mr-auto">              
+                  {% if page_incomes.has_previous %}
+                    <a class="btn btn-outline-default mb-4" href="?page=1">First</a>
+                    <a class="btn btn-outline-default mb-4" href="?page={{ page_incomes.previous_page_number }}">Previous</a>
+                  {% endif %}
+                  {% for num in page_incomes.paginator.page_range %}
+                      {% if page_incomes.number == num %}
+                        <a class="btn btn-default mb-4" href="?page={{ num }}">{{ num }}</a>
+                      {% elif num > page_incomes.number|add:'-2' and num < page_incomes.number|add:'2' %}
+                        <a class="btn btn-outline-default mb-4" href="?page={{ num }}">{{ num }}</a>
+                      {% endif %}
+                  {% endfor %}
+                  {% if page_incomes.has_next %}
+                    <a class="btn btn-outline-default mb-4" href="?page={{ page_incomes.next_page_number }}">Next</a>
+                    <a class="btn btn-outline-default mb-4" href="?page={{ page_incomes.paginator.num_pages }}">Last</a>
+                  {% endif %}
+                  </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>

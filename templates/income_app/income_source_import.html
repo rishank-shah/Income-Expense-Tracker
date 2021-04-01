@@ -35,14 +35,7 @@
                       <p class="text-black mt-2">Please Note: The columns should be Date of Income in the Format of DD-MM-YY, Source, Description, Amount. You Can Download an example csv <a href="{% static 'csv/income_example.csv' %}">here</a>.</p>
                       <form action="{% url 'income_import_from_csv' %}" method="POST" enctype="multipart/form-data" class="form-horizontal">
                         {% csrf_token %}
-                        <div class="row">
-                            <div class="col-md-9">
-                              <input type="file" class="form-control" name="income_csv_file" id="income_csv_file" required="True" accept=".csv" class="form-control">
-                            </div>
-                            <div class="col-md-3">
-                              <button class="btn btn-default">Upload CSV</button>
-                            </div>
-                        </div>
+                        <div class="row"><div class="col-md-9">  <input type="file" class="form-control" name="income_csv_file" id="income_csv_file" required="True" accept=".csv" class="form-control"></div><div class="col-md-3">  <button class="btn btn-default">Upload CSV</button></div></div>
                       </form>
                   {% endif %}
                 </div>
@@ -51,6 +44,26 @@
           </div>
         </div>
       </div>
+      {% if upload %}
+      <div class="row">
+        <div class="col mr-5 ml-5">
+          <div class="card">
+            <div class="card-header bg-transparent">
+              <div class="row align-items-center">  
+                <div class="col">
+                    <h5 class="h3 mb-0 text-center">Import Income From excel</h5>
+                    <p class="text-black mt-2">Please Note: The columns should be Date of Income in the Format of DD-MM-YY, Source, Description, Amount. You Can Download a example excel <a href="{% static 'xlsx/income_example.xlsx' %}">here</a>.</p>
+                    <form action="{% url 'income_import_from_excel' %}" method="POST" enctype="multipart/form-data" class="form-horizontal">
+                      {% csrf_token %}
+                      <div class="row"><div class="col-md-9"><input type="file" class="form-control" name="income_excel_file" id="income_excel_file" required="True" accept=".xls,.xlsx" class="form-control"></div><div class="col-md-3"><button class="btn btn-default">Upload Excel</button></div></div>
+                    </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
     </div>
     {% if create %}
       <div class="container-fluid mt-5">
