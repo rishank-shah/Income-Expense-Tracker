@@ -37,8 +37,11 @@ def income_page(request):
 
 @login_required(login_url='login')
 def add_income(request):
+
     if IncomeSource.objects.filter(user=request.user).exists():
+
         sources = IncomeSource.objects.filter(user=request.user)
+
         context = {
             'sources' : sources,
             'values':request.POST
@@ -90,7 +93,9 @@ def add_income(request):
 
 @login_required(login_url='login')
 def add_income_source(request):
+
     sources = IncomeSource.objects.filter(user=request.user)
+    
     context = {
         'sources' : sources,
         'values':request.POST,
@@ -122,7 +127,16 @@ def add_income_source(request):
 
 @login_required(login_url='login')
 def edit_income_source(request,id):
-    source_obj = IncomeSource.objects.get(user=request.user,pk=id)
+
+    if IncomeSource.objects.filter(user=request.user,pk=id).exists():
+        source_obj = IncomeSource.objects.get(user=request.user,pk=id)
+    else:
+        messages.error(request,'Something Went Wrong')
+        return redirect('add_income_source')
+    
+    if source_obj.user != request.user:
+        messages.error(request,'Something Went Wrong')
+        return redirect('add_income_source')
 
     context = {
         'value' : source_obj.source,
@@ -159,11 +173,11 @@ def edit_income_source(request,id):
 
 @login_required(login_url='login')
 def delete_income_source(request,id):
-    if IncomeSource.objects.filter(pk=id).exists():
-        income_source = IncomeSource.objects.get(pk=id)
-        user = User.objects.get(username=request.user.username)
+
+    if IncomeSource.objects.filter(pk=id,user=request.user).exists():
+        income_source = IncomeSource.objects.get(pk=id,user=request.user)
         
-        if income_source.user != user:
+        if income_source.user != request.user:
             messages.error(request,'You cannot delete this income source.')
             return redirect('add_income_source')
         
@@ -185,6 +199,10 @@ def edit_income(request,id):
         messages.error(request,'Something went Wrong. Please Try Again')
         return redirect('income')
     
+    if income.user != request.user:
+        messages.error(request,'Something Went Wrong')
+        return redirect('income')
+
     sources = IncomeSource.objects.filter(user=request.user).exclude(id=income.source.id)
 
     context = {
@@ -234,10 +252,18 @@ def edit_income(request,id):
 
 @login_required(login_url='login')
 def delete_income(request,id):
+
     if Income.objects.filter(id=id,user=request.user).exists():
-        Income.objects.get(id=id,user=request.user).delete()
-        messages.success(request,'Income Deleted Successfully')
-        return redirect('income')
+        income = Income.objects.get(id=id,user=request.user)
+        
+        if income.user != request.user:
+            messages.error(request,'Something Went Wrong')
+            return redirect('income')
+        
+        else:
+            income.delete()
+            messages.success(request,'Income Deleted Successfully')
+            return redirect('income')
     else:
         messages.error(request,'Something went Wrong. Please Try Again')
         return redirect('income')
@@ -416,8 +442,6 @@ def upload_excel(request):
                 income_excel_data.remove([])
             except:
                 pass
-
-
 
             if len(income_excel_data) > 11:
                 messages.error(request,'Please upload a excel file with less than 10 rows.')

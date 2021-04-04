@@ -40,3 +40,7 @@ pyexcel-io==0.6.4
 pyexcel-xls==0.6.2
 pyexcel-xlsx==0.6.0
 xlrd==1.2.0
+sentry-sdk==1.0.0
+django-user-agents==0.4.0
+ua-parser==0.10.0
+user-agents==2.2.0

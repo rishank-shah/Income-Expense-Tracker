@@ -94,7 +94,7 @@ class Login(View):
                 return render(request,'auth_app/login.html',context=context)
         else:
             messages.error(request,'Something went wrong.')
-            return render(request,'authentication/login.html',context=context)
+            return render(request,'auth_app/login.html',context=context)
 
 
 
