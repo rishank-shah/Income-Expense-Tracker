@@ -4,6 +4,7 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path('view/',views.expense_page,name="expense"),
+    path('expense-sort/',views.expense_page_sort,name="expense_page_sort"),
     path('add-expense/',views.add_expense,name="add_expense"),
     path('add-category/',views.add_expense_category,name="add_expense_category"),
     path('edit-category/<int:id>/',views.edit_expense_category,name="edit_expense_category"),

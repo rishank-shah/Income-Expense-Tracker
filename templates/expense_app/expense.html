@@ -2,12 +2,14 @@
 {% load static %}
 {% block title_main %}Expenses{% endblock %}
 {% block body_main %}
+<link rel="stylesheet" href="{% static 'css/arrow.css' %}" type="text/css">
     {% include "partials/_sidebar_main.html" %}
   <div class="main-content" id="panel">
     {% include "partials/_navbar_main.html" %}
     <div class="header bg-primary pb-6">
       <div class="mr-5 ml-5"><div class="mr-5 ml-5">{% include "partials/_messages.html" %}</div></div>
-    <div class="container-fluid"><div class="header-body"><div class="row align-items-center py-4"><div class="col-lg-5 col-6"><nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4"><ol class="breadcrumb breadcrumb-links breadcrumb-dark"><li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i></a></li><li class="breadcrumb-item"><a href="{% url 'expense' %}">Expense</a></li><li class="breadcrumb-item active" aria-current="page">View</li></ol></nav></div><div class="col-md-3 text-right ml--5 mr-5"><div class="input-group input-group-alternative input-group-merge"><div class="input-group-prepend"><span style="border-end-start-radius: 50%; border-start-start-radius: 50%;" class="input-group-text"><i class="fas fa-search"></i></span></div><input class="form-control" id ="searchField" placeholder="Search" type="text"><div class="input-group-append"><span style="border-end-end-radius: 50%; border-start-end-radius: 50%;"  class="input-group-text"></span></div></div></div><div class="col-md-2 text-right ml-3 mr--3"><a href="{% url 'import_expense' %}" class="btn btn btn-neutral">Import</a> </div><div class="col-md-2 text-right ml--4"><a href="{% url 'add_expense' %}" class="btn btn btn-neutral">Create New</a></div></div></div></div></div>
+      <div class="container-fluid"><div class="header-body"><div class="row align-items-center py-4"><div class="col-lg-5 col-6"><nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4"><ol class="breadcrumb breadcrumb-links breadcrumb-dark"><li class="breadcrumb-item"><a href="{% url 'dashboard' %}"><i class="fas fa-home"></i></a></li><li class="breadcrumb-item"><a href="{% url 'expense' %}">Expense</a></li><li class="breadcrumb-item active" aria-current="page">View</li></ol></nav></div><div class="col-md-3 text-right ml--5 mr-5"><div class="input-group input-group-alternative input-group-merge"><div class="input-group-prepend"><span style="border-end-start-radius: 50%; border-start-start-radius: 50%;" class="input-group-text"><i class="fas fa-search"></i></span></div><input class="form-control" id ="searchField" placeholder="Search" type="text"><div class="input-group-append"><span style="border-end-end-radius: 50%; border-start-end-radius: 50%;"  class="input-group-text"></span></div></div></div><div class="col-md-2 text-right ml-3 mr--3"><a href="{% url 'import_expense' %}" class="btn btn btn-neutral">Import</a> </div><div class="col-md-2 text-right ml--4"><a href="{% url 'add_expense' %}" class="btn btn btn-neutral">Create New</a></div></div><hr class="mt--2"/><div class="row align-items-center py-4"><div class="col mt--5 ml-5"><form method="GET" class="form-inline ml-5" action="{% url 'expense' %}"><div class="form-group"><span class="text-white ml-5">From: <input class="ml-1 form-control form-control-sm col-md-8" id="date_from" name="date_from" type="date" value="{{ filter_context.date_from }}" /></span></div><div class="form-group"><span class="text-white ml-5">To: <input class="ml-1 form-control form-control-sm col-md-9" id="date_to" name="date_to" value="{{ filter_context.date_to }}" type="date" /></span></div><div class="ml-5"><span class="ml-5"><button class="ml-5 mr-3 btn btn-success btn-sm">Filter</button></span></div><button onclick="clearFilters()" class="mr-5 ml-2 btn btn-danger btn-sm">Clear</button></form></div></div><hr class="mt--2"/></div></div>
+    </div>
     <div class="container-fluid mt--6">
       <div class="row">
         <div class="col">
@@ -19,7 +21,7 @@
                     <h5 class="h3 text-white mb-0 text-center">My Expenses - <span id="expense_count">{{ expenses.count }}</span></h5>
                     <div class="app-table mt-5">
                       <table id="table-complete" class="table text-white">
-                        <thead><tr><th style="font-size: small;">Amount ({{currency}})</th><th style="font-size: small;">Category</th><th style="font-size: small;">Description</th><th style="font-size: small;">Date</th><th style="font-size: small;">Action</th></tr></thead>
+                        <thead><tr><th style="font-size: small;"><span class="row">Amount ({{currency}}) <span class="col"><div class="mb-1 arrow-up" id="amount_up"></div><div class="arrow-down" id="amount_down"></div></span> </span></th><th style="font-size: small;">Category</th><th style="font-size: small;">Description </th><th style="font-size: small;"><span class="row ml-1"> Date <span class="col"><div class="mb-1 arrow-up" id="date_up"></div><div class="arrow-down" id="date_down"></div></span> </span></th><th style="font-size: small;">Action</th></tr></thead>
                         <tbody id="table-body-data" >{% for expense in page_expenses %}<tr><td>{{expense.amount}}</td><td>{{expense.category.name | truncatechars:20 }}</td><td>{{expense.description | truncatechars:30 }}</td><td>{{expense.date}}</td><td><a href="{% url 'edit_expense' expense.id %}" class="btn btn-warning btn-sm">Edit</a></td></tr>{% endfor %}</tbody>
                       </table>
                     </div>
@@ -35,19 +37,19 @@
               <div class="col-md-6">
                 <ul class="pagination align-right float-right mr-auto">              
                   {% if page_expenses.has_previous %}
-                    <a class="btn btn-outline-default mb-4" href="?page=1">First</a>
-                    <a class="btn btn-outline-default mb-4" href="?page={{ page_expenses.previous_page_number }}">Previous</a>
+                    <a class="btn btn-outline-default mb-4" href="{{base_url}}page=1">First</a>
+                    <a class="btn btn-outline-default mb-4" href="{{base_url}}page={{ page_expenses.previous_page_number }}">Previous</a>
                   {% endif %}
                   {% for num in page_expenses.paginator.page_range %}
                       {% if page_expenses.number == num %}
-                        <a class="btn btn-default mb-4" href="?page={{ num }}">{{ num }}</a>
+                        <a class="btn btn-default mb-4" href="{{base_url}}page={{ num }}">{{ num }}</a>
                       {% elif num > page_expenses.number|add:'-2' and num < page_expenses.number|add:'2' %}
-                        <a class="btn btn-outline-default mb-4" href="?page={{ num }}">{{ num }}</a>
+                        <a class="btn btn-outline-default mb-4" href="{{base_url}}page={{ num }}">{{ num }}</a>
                       {% endif %}
                   {% endfor %}
                   {% if page_expenses.has_next %}
-                    <a class="btn btn-outline-default mb-4" href="?page={{ page_expenses.next_page_number }}">Next</a>
-                    <a class="btn btn-outline-default mb-4" href="?page={{ page_expenses.paginator.num_pages }}">Last</a>
+                    <a class="btn btn-outline-default mb-4" href="{{base_url}}page={{ page_expenses.next_page_number }}">Next</a>
+                    <a class="btn btn-outline-default mb-4" href="{{base_url}}page={{ page_expenses.paginator.num_pages }}">Last</a>
                   {% endif %}
                   </ul>
               </div>
@@ -58,4 +60,17 @@
     </div>
   </div>
   <script src="{% static 'js/expense_search.js' %}"></script>
+  <form method="GET" id="amount_up_form" action="{% url 'expense_page_sort' %}">
+    <input hidden name="amount_sort" value="2"></input>
+  </form>
+  <form method="GET" id="amount_down_form" action="{% url 'expense_page_sort' %}">
+    <input hidden name="amount_sort" value="1"></input>
+  </form>
+  <form method="GET" id="date_up_form" action="{% url 'expense_page_sort' %}">
+    <input hidden name="date_sort" value="2"></input>
+  </form>
+  <form method="GET" id="date_down_form" action="{% url 'expense_page_sort' %}">
+    <input hidden name="date_sort" value="1"></input>
+  </form>
+  <script src="{% static 'js/sorting.js' %}"></script>
 {% endblock %}

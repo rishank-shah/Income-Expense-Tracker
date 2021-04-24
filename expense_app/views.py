@@ -16,10 +16,52 @@ import datetime
 from .utils import expense_send_success_mail,expense_send_error_mail
 from pyexcel_xls import get_data as xls_get
 from pyexcel_xlsx import get_data as xlsx_get
+from datetime import datetime as datetime_custom
+from django.db.models import Q
 
 @login_required(login_url='login')
 def expense_page(request):
-    expenses =  Expense.objects.filter(user=request.user).order_by('-date')
+
+    filter_context = {}
+    base_url = f''
+    date_from_html = ''
+    date_to_html = ''
+
+    expenses =  Expense.objects.filter(
+        user = request.user
+    ).order_by('-date')
+
+    if 'date_from' in request.GET and request.GET['date_from'] != '':
+        date_from = datetime_custom.strptime(request.GET['date_from'],'%Y-%m-%d')
+        filter_context['date_from'] = request.GET['date_from']
+        date_from_html = request.GET['date_from']
+
+        if 'date_to' in request.GET and request.GET['date_to'] != '':
+
+            date_to = datetime_custom.strptime(request.GET['date_to'],'%Y-%m-%d')
+            filter_context['date_to'] = request.GET['date_to']
+            date_to_html = request.GET['date_to']
+            expenses = expenses.filter(
+                Q(date__gte = date_from )
+                &
+                Q(date__lte = date_to)
+            ).order_by('-date')
+
+        else:
+            expenses = expenses.filter(
+                date__gte = date_from
+            ).order_by('-date')
+
+    elif 'date_to' in request.GET and request.GET['date_to'] != '':
+
+        date_to_html = request.GET['date_to']
+        date_to = datetime_custom.strptime(request.GET['date_to'],'%Y-%m-%d')
+        filter_context['date_from'] = request.GET['date_to']
+        expenses = expenses.filter(
+            date__lte = date_to
+        ).order_by('-date')
+    
+    base_url = f'?date_from={date_from_html}&date_to={date_to_html}&'
     paginator = Paginator(expenses,5)
     page_number = request.GET.get('page')
     page_expenses = Paginator.get_page(paginator,page_number)
@@ -32,7 +74,9 @@ def expense_page(request):
     return render(request,'expense_app/expense.html',{
         'currency':currency,
         'page_expenses':page_expenses,
-        'expenses':expenses
+        'expenses':expenses,
+        'filter_context':filter_context,
+        'base_url':base_url
     })
 
 @login_required(login_url='login')
@@ -514,3 +558,39 @@ def upload_excel(request):
 
             messages.error(request,'Please Check if the format of excel file is correct.')
             return redirect('import_expense')
+
+@login_required(login_url='login')
+def expense_page_sort(request):
+
+    expenses =  Expense.objects.filter(user=request.user)
+    base_url = ''
+    
+    if 'amount_sort' in request.GET and request.GET.get('amount_sort'):
+        base_url = f'?amount_sort={request.GET.get("amount_sort",2)}&'
+        if int(request.GET.get('amount_sort',2)) == 1:
+            expenses = expenses.order_by('-amount')
+        elif int(request.GET.get('amount_sort',2)) == 2:
+            expenses = expenses.order_by('amount')
+    
+    if 'date_sort' in request.GET and request.GET.get('date_sort'):
+        base_url = f'?date_sort={request.GET.get("date_sort",2)}&'
+        if int(request.GET.get('date_sort',2)) == 1:
+            expenses = expenses.order_by('-date')
+        elif int(request.GET.get('date_sort',2)) == 2:
+            expenses = expenses.order_by('date')
+    
+    paginator = Paginator(expenses,5)
+    page_number = request.GET.get('page')
+    page_expenses = Paginator.get_page(paginator,page_number)
+
+    if UserProfile.objects.filter(user = request.user).exists():
+        currency = UserProfile.objects.get(user = request.user).currency
+    else:
+        currency = 'INR - Indian Rupee'
+
+    return render(request,'expense_app/expense.html',{
+        'currency':currency,
+        'page_expenses':page_expenses,
+        'expenses':expenses,
+        'base_url':base_url
+    })
