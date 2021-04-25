@@ -117,7 +117,7 @@ def change_email_pref(request):
         user_profile.email_preference = not user_profile.email_preference
         user_profile.save()
         
-        messages.success(request,"Email Preference Changed saved")
+        messages.success(request,"Email preference updated")
         return redirect('user_profile')
     else:
         return redirect('user_profile')

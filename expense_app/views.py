@@ -31,35 +31,41 @@ def expense_page(request):
         user = request.user
     ).order_by('-date')
 
-    if 'date_from' in request.GET and request.GET['date_from'] != '':
-        date_from = datetime_custom.strptime(request.GET['date_from'],'%Y-%m-%d')
-        filter_context['date_from'] = request.GET['date_from']
-        date_from_html = request.GET['date_from']
+    try:
 
-        if 'date_to' in request.GET and request.GET['date_to'] != '':
+        if 'date_from' in request.GET and request.GET['date_from'] != '':
+            date_from = datetime_custom.strptime(request.GET['date_from'],'%Y-%m-%d')
+            filter_context['date_from'] = request.GET['date_from']
+            date_from_html = request.GET['date_from']
 
-            date_to = datetime_custom.strptime(request.GET['date_to'],'%Y-%m-%d')
-            filter_context['date_to'] = request.GET['date_to']
+            if 'date_to' in request.GET and request.GET['date_to'] != '':
+
+                date_to = datetime_custom.strptime(request.GET['date_to'],'%Y-%m-%d')
+                filter_context['date_to'] = request.GET['date_to']
+                date_to_html = request.GET['date_to']
+                expenses = expenses.filter(
+                    Q(date__gte = date_from )
+                    &
+                    Q(date__lte = date_to)
+                ).order_by('-date')
+
+            else:
+                expenses = expenses.filter(
+                    date__gte = date_from
+                ).order_by('-date')
+
+        elif 'date_to' in request.GET and request.GET['date_to'] != '':
+
             date_to_html = request.GET['date_to']
+            date_to = datetime_custom.strptime(request.GET['date_to'],'%Y-%m-%d')
+            filter_context['date_from'] = request.GET['date_to']
             expenses = expenses.filter(
-                Q(date__gte = date_from )
-                &
-                Q(date__lte = date_to)
+                date__lte = date_to
             ).order_by('-date')
-
-        else:
-            expenses = expenses.filter(
-                date__gte = date_from
-            ).order_by('-date')
-
-    elif 'date_to' in request.GET and request.GET['date_to'] != '':
-
-        date_to_html = request.GET['date_to']
-        date_to = datetime_custom.strptime(request.GET['date_to'],'%Y-%m-%d')
-        filter_context['date_from'] = request.GET['date_to']
-        expenses = expenses.filter(
-            date__lte = date_to
-        ).order_by('-date')
+    
+    except:
+        messages.error(request,'Something went wrong')
+        return redirect('expense')
     
     base_url = f'?date_from={date_from_html}&date_to={date_to_html}&'
     paginator = Paginator(expenses,5)
@@ -564,21 +570,27 @@ def expense_page_sort(request):
 
     expenses =  Expense.objects.filter(user=request.user)
     base_url = ''
+
+    try:
     
-    if 'amount_sort' in request.GET and request.GET.get('amount_sort'):
-        base_url = f'?amount_sort={request.GET.get("amount_sort",2)}&'
-        if int(request.GET.get('amount_sort',2)) == 1:
-            expenses = expenses.order_by('-amount')
-        elif int(request.GET.get('amount_sort',2)) == 2:
-            expenses = expenses.order_by('amount')
+        if 'amount_sort' in request.GET and request.GET.get('amount_sort'):
+            base_url = f'?amount_sort={request.GET.get("amount_sort",2)}&'
+            if int(request.GET.get('amount_sort',2)) == 1:
+                expenses = expenses.order_by('-amount')
+            elif int(request.GET.get('amount_sort',2)) == 2:
+                expenses = expenses.order_by('amount')
+        
+        if 'date_sort' in request.GET and request.GET.get('date_sort'):
+            base_url = f'?date_sort={request.GET.get("date_sort",2)}&'
+            if int(request.GET.get('date_sort',2)) == 1:
+                expenses = expenses.order_by('-date')
+            elif int(request.GET.get('date_sort',2)) == 2:
+                expenses = expenses.order_by('date')
     
-    if 'date_sort' in request.GET and request.GET.get('date_sort'):
-        base_url = f'?date_sort={request.GET.get("date_sort",2)}&'
-        if int(request.GET.get('date_sort',2)) == 1:
-            expenses = expenses.order_by('-date')
-        elif int(request.GET.get('date_sort',2)) == 2:
-            expenses = expenses.order_by('date')
-    
+    except:
+        messages.error(request,'Something went wrong')
+        return redirect('expense')
+
     paginator = Paginator(expenses,5)
     page_number = request.GET.get('page')
     page_expenses = Paginator.get_page(paginator,page_number)
