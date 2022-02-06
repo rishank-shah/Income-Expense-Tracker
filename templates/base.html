@@ -7,9 +7,9 @@
         <title>{% block title_main %}{% endblock %}</title>
         <link rel="icon" href="{% static 'img/favicon.png' %}" type="image/gif" sizes="16x16">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
-        <link rel="stylesheet" href="https://demos.creative-tim.com/argon-dashboard/assets/vendor/nucleo/css/nucleo.css" type="text/css">
+        <link href="{% static 'css/nucleo.css' %}" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0/css/all.min.css" integrity="sha512-c93ifPoTvMdEJH/rKIcBx//AL1znq9+4/RmMGafI/vnTFe/dKwnn1uoeszE2zJBQTS1Ck5CqSBE+34ng2PthJg==" crossorigin="anonymous" />
-        <link rel="stylesheet" href="https://demos.creative-tim.com/argon-dashboard/assets/css/argon.min.css?v=1.2.0" type="text/css">
+		<link href="{% static 'css/argon.min.css?v=1.2.0' %}" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     </head>
     <style>::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{box-shadow:inset 0 0 6px rgba(0,0,0,.3)}::-webkit-scrollbar-thumb{background-color: rgb(143, 142, 142);border-radius: 5px;background-clip: padding-box; }</style>
@@ -20,8 +20,8 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.js" integrity="sha512-0BxM5r4JTYD5/g/d8IK/193jwR1CZ8N2tIevVUi6gCgH+k9fseGEvPOEJSLKLz91h+q6n+oLlj6n+7x67Gki2A==" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/jquery-scroll-lock@3.1.3/jquery-scrollLock.min.js" integrity="sha256-OGBqkSG4kYQ0UbrT7juDZpE/VqIjMPuu6CVKQ1KaTEA=" crossorigin="anonymous"></script>
-        <script src="https://demos.creative-tim.com/argon-dashboard/assets/vendor/chart.js/dist/Chart.extension.js"></script>
-        <script src="https://demos.creative-tim.com/argon-dashboard/assets/js/argon.min.js?v=1.2.0"></script>
+		<script src="{% static 'js/Chart.extension.js' %}"></script>
+		<script src="{% static 'js/argon.min.js?v=1.2.0' %}"></script>
     </body>
     <form action="{% url 'logout' %}" id = "formnew" method="POST">{% csrf_token %}</form>
 </html>
